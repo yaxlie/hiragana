@@ -2,43 +2,43 @@ package com.mlmg.hiragana;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.nfc.Tag;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.games.AnnotatedData;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesStatusCodes;
+import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
-import com.google.android.gms.games.leaderboard.Leaderboards;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.mlmg.hiragana.database.PlayerDatabase;
+
+import org.w3c.dom.Text;
+
+import static com.mlmg.hiragana.GoogleApiHelper.RC_SIGN;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks
         , GoogleApiClient.OnConnectionFailedListener {
 
     private PlayerDatabase dbPlayer;
     private Button buttonPlay[] = new Button[6];
+    private GoogleApiHelper apiHelper = new GoogleApiHelper(MainActivity.this);
 
     //private GoogleSignInOptions gso;
     private GoogleApiClient apiClient;
@@ -51,19 +51,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         dbPlayer = new PlayerDatabase(HelperApplication.getAppContext());
 
         //gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).build();
-        connectGoogle();
+        //connectGoogle();
+        apiHelper.startSignInIntent();
 
-        loadScoreOfLeaderBoard();
         initiateUI();
         updateScore();
         setCrowns();
         activateLevels();
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        apiHelper.signInSilently();
         updateScore();
         setCrowns();
         activateLevels();
@@ -116,7 +116,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         achiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAchievements();
+                if(apiHelper.isSignedIn())
+                    apiHelper.showAchievements();
+                else
+                    apiHelper.startSignInIntent();
             }
         });
 
@@ -124,7 +127,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         rankButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showLeaderboard();
+                if(apiHelper.isSignedIn())
+                    apiHelper.showLeaderboard();
+                else
+                    apiHelper.startSignInIntent();
             }
         });
 
@@ -132,69 +138,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadScoreOfLeaderBoard();
+                Intent intent = new Intent(MainActivity.this, InfoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button timeButton = (Button) findViewById(R.id.buttonTime);
+        timeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PlayTimeActivity.class);
+                startActivity(intent);
             }
         });
 
 
     }
 
-    private void showLeaderboard() {
-        if(apiClient.isConnected())
-            startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(apiClient), RC_LEADERBOARD_UI);
-        else {
-            Intent intent = getIntent();
-            finish();
-            startActivity(intent);
-        }
-    }
-
-    private void showAchievements() {
-        if(apiClient.isConnected())
-            startActivityForResult(Games.Achievements.getAchievementsIntent(apiClient), RC_LEADERBOARD_UI + 1);
-        else {
-            //apiClient.connect();
-            //apiClient.stopAutoManage(MainActivity.this);
-            //apiClient.disconnect();
-            Intent intent = getIntent();
-            finish();
-            startActivity(intent);
-        }
-    }
-
-    private void loadScoreOfLeaderBoard() {
-        if(apiClient.isConnected()) {
-            Games.Leaderboards.loadCurrentPlayerLeaderboardScore(apiClient, getString(R.string.leaderboard_points),
-                    LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC)
-                    .setResultCallback(new ResultCallback<Leaderboards.LoadPlayerScoreResult>() {
-                        @Override
-                        public void onResult(final Leaderboards.LoadPlayerScoreResult scoreResult) {
-                            if (isScoreResultValid(scoreResult)) {
-                                long mPoints = scoreResult.getScore().getRawScore();
-                                if (dbPlayer.getScore() < (int) mPoints) {
-                                    dbPlayer.setScore((int) mPoints);
-                                    updateScore();
-                                }
-                            }
-                        }
-                    });
-        }
-    }
-    private boolean isScoreResultValid(final Leaderboards.LoadPlayerScoreResult scoreResult) {
-        return scoreResult != null && GamesStatusCodes.STATUS_OK == scoreResult.getStatus().getStatusCode() && scoreResult.getScore() != null;
-    }
-    private void connectGoogle(){
-        apiClient = new GoogleApiClient.Builder(this)
-                .addApi(Games.API)
-                .addScope(Games.SCOPE_GAMES)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Toast.makeText(MainActivity.this, "Could not connect to Play games services",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }).build();
-    }
     private void updateScore(){
         TextView scoreText = (TextView)findViewById(R.id.pointsText);
         scoreText.setText(Integer.toString(dbPlayer.getScore()));
@@ -246,8 +206,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
-        loadScoreOfLeaderBoard();
     }
 
     @Override
@@ -259,4 +217,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                GoogleSignInAccount signedInAccount = result.getSignInAccount();
+                apiHelper.setViewForPopups(signedInAccount, findViewById(R.id.mainView));
+
+                Games.getLeaderboardsClient(MainActivity.this, signedInAccount)
+                        .loadCurrentPlayerLeaderboardScore(getString(R.string.leaderboard_points),
+                                LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC)
+                        .addOnSuccessListener(new OnSuccessListener<AnnotatedData<LeaderboardScore>>() {
+                            @Override
+                            public void onSuccess(AnnotatedData<LeaderboardScore> leaderboardScoreAnnotatedData) {
+                                long mPoints = leaderboardScoreAnnotatedData.get().getRawScore();
+                                PlayerDatabase db = new PlayerDatabase(HelperApplication.getAppContext());
+                                if (db.getScore() < (int) mPoints) {
+                                    db.setScore((int) mPoints);
+                                    updateScore();
+                                }
+                            }
+                        });
+
+            } else {
+                Toast.makeText(this,"Signing in Error.", Toast.LENGTH_SHORT);
+            }
+        }
+    }
+
 }

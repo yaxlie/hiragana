@@ -131,6 +131,12 @@ public class HiraganaDatabase extends SQLiteOpenHelper {
         return letter;
     }
 
+    public Cursor getAllFromCategory(int category) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from hiragana where category = " + Integer.toString(category), null);
+        return res;
+    }
+
     public int getSizeCategory(int category){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from hiragana where category = CAST("+category+" as TEXT)" , null);

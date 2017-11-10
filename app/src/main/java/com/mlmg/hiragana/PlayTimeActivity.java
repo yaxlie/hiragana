@@ -1,9 +1,13 @@
 package com.mlmg.hiragana;
 
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,48 +20,49 @@ import com.mlmg.hiragana.database.PlayerDatabase;
 
 import java.util.Random;
 
-public class PlayActivity extends AppCompatActivity {
+public class PlayTimeActivity extends AppCompatActivity {
 
-    private static int maxToGet = 10;
-    private static int maxAttempt = 15;
+    private static int startTime = 30;
+    private static int correctPoints = 12;
+    private static int timePenalty = 5000;
 
-    private TextView attemptText;
+
+    private long timeLeft;
+
+    private TextView scoreText;
     private TextView titleText;
-    private TextView pointsText;
+    private TextView timeText;
+
+    private int bestScore;
 
     private Button[] button = new Button[4];
     private Button buttonEnd;
 
     private Letter letter = null;
 
-    private int levelId;
-
-    private int pointsToGet = maxToGet;
-    private int attempt = 1;
+    private CountDownTimer timer;
     private int score = 0;
 
     private Handler handler = new Handler();
 
     private HiraganaDatabase dbHiragana;
     private PlayerDatabase dbPlayer;
-    private GoogleApiHelper apiHelper = new GoogleApiHelper(PlayActivity.this);
+    private GoogleApiHelper apiHelper = new GoogleApiHelper(PlayTimeActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_play);
+        setContentView(R.layout.activity_play_time);
 
         apiHelper.signInSilently();
-
-        Bundle b = getIntent().getExtras();
-        levelId = b!=null? b.getInt("id"): 1;
+        timeLeft = startTime;
 
         dbHiragana = new HiraganaDatabase(HelperApplication.getAppContext());
         dbPlayer = new PlayerDatabase(HelperApplication.getAppContext());
 
-        attemptText = (TextView) findViewById(R.id.attemptTextView);
+        scoreText = (TextView) findViewById(R.id.scoreTextView);
         titleText = (TextView) findViewById(R.id.titleTextView);
-        pointsText = (TextView) findViewById(R.id.timeTextView);
+        timeText = (TextView) findViewById(R.id.timeTextView);
 
         button[0] = (Button) findViewById(R.id.button1);
         button[1] = (Button) findViewById(R.id.button2);
@@ -74,8 +79,17 @@ public class PlayActivity extends AppCompatActivity {
             }
         });
 
-        refreshText();
+        timeText.setText(Integer.toString(startTime));
+        scoreText.setText(Integer.toString(score));
+
+        bestScore = dbPlayer.getTimescore();
+        TextView textBest = (TextView) findViewById(R.id.textBestScore);
+        textBest.setText("Best Score : " +Integer.toString(bestScore));
+
         setScene();
+
+        timer = setUpTimer(30000).start();
+
     }
 
     @Override
@@ -89,14 +103,13 @@ public class PlayActivity extends AppCompatActivity {
         boolean losuj = true;
 
         while(losuj) {
-            letter = levelId != HiraganaTable.Category.ALL ? dbHiragana.getRandomCategory(levelId) :
-                    dbHiragana.getRandomAll();
+            letter = dbHiragana.getRandomAll();
             losuj = (letter.getUid() == letterUid);
         }
         titleText.setText(letter.getLetter_h());
 
         for(int i=0; i<4; i++){
-            button[i].setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.buttonColor));
+            button[i].setBackgroundColor(ContextCompat.getColor(PlayTimeActivity.this, R.color.buttonColor));
             button[i].setText("");
             button[i].setEnabled(true);
         }
@@ -108,7 +121,7 @@ public class PlayActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v) {
-                button[r].setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.buttonCorrect));
+                button[r].setBackgroundColor(ContextCompat.getColor(PlayTimeActivity.this, R.color.buttonCorrect));
                 correctAnswer();
             }
         });
@@ -121,15 +134,14 @@ public class PlayActivity extends AppCompatActivity {
                         letterNext.getLetter_l().equals(button[1].getText()) ||
                         letterNext.getLetter_l().equals(button[2].getText()) ||
                         letterNext.getLetter_l().equals(button[3].getText())) {
-                    letterNext = levelId != HiraganaTable.Category.ALL ? dbHiragana.getRandomCategory(levelId) :
-                            dbHiragana.getRandomAll();
+                    letterNext = dbHiragana.getRandomAll();
                 }
                 button[i].setText(letterNext.getLetter_l());
                 final int finalI = i;
                 button[i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        button[finalI].setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.buttonWrong));
+                        button[finalI].setBackgroundColor(ContextCompat.getColor(PlayTimeActivity.this, R.color.buttonWrong));
                         button[finalI].setEnabled(false);
                         wrongAnswer();
                     }
@@ -140,88 +152,44 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void correctAnswer() {
-        score += pointsToGet;
-        dbPlayer.addPoints(pointsToGet);
-        pointsToGet = maxToGet;
+        scoreText.setText(Integer.toString(++score));
+        dbPlayer.addPoints(correctPoints);
         setButtonsActive(false);
 
 
         if(apiHelper.isSignedIn()) {
-            apiHelper.progressAchi(getString(R.string.achievement_points_master), pointsToGet);
-            apiHelper.progressAchi(getString(R.string.achievement_points____whut), pointsToGet);
+            apiHelper.progressAchi(getString(R.string.achievement_points_master), correctPoints);
+            apiHelper.progressAchi(getString(R.string.achievement_points____whut), correctPoints);
             apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
         }
 
-        refreshText();
-        if (++attempt <= maxAttempt || levelId==6) {
             handler.postDelayed(new Runnable() {
-                public void run() {
-                    setScene();
-                }
-            }, levelId!=6? 700: 100);
-        }
-        else{
-            buttonEnd.setVisibility(View.VISIBLE);
+                    public void run() {
+                        setScene();
+                    }
+                }, 50);
         }
 
-    }
 
-    private void refreshText(){
-        pointsText.setText(Integer.toString(score));
-        attemptText.setText(levelId!=6? Integer.toString(attempt) + "/" + Integer.toString(maxAttempt)
-                : Integer.toString(attempt));
-    }
+
     private void setButtonsActive(boolean b){
         for(int i=0; i<4; i++){
             button[i].setEnabled(b);
         }
     }
+
     private void wrongAnswer(){
-        pointsToGet /= 2;
+        timer.cancel();
+        timeLeft -= timePenalty;
+        timer = setUpTimer((int)timeLeft).start();
+
     }
 
     private void over(){
-        if(score >= maxToGet * maxAttempt){
-            dbPlayer.setCrown(levelId);
-            boolean unlock = true;
-            for(int i=levelId; i>0; i--){
-                if(!dbPlayer.isCrowned(i)) {
-                    unlock = false;
-                }
-            }
-            if(unlock && !dbPlayer.isUnlocked(levelId+1)){
-                dbPlayer.unlockLevel(levelId+1);
-                dbPlayer.addPoints(50*levelId+1);
-            }
-
-            if(apiHelper.isSignedIn()) {
-                if (unlock && levelId == 5)
-                    apiHelper.unlockAchi(getString(R.string.achievement_sensei));
-
-                switch (levelId) {
-                    case 1:
-                        apiHelper.unlockAchi(getString(R.string.achievement_level_1));
-                        break;
-                    case 2:
-                        apiHelper.unlockAchi(getString(R.string.achievement_level_2));
-                        break;
-                    case 3:
-                        apiHelper.unlockAchi(getString(R.string.achievement_level_3));
-                        break;
-                    case 4:
-                        apiHelper.unlockAchi(getString(R.string.achievement_level_4));
-                        break;
-                    case 5:
-                        apiHelper.unlockAchi(getString(R.string.achievement_level_5));
-                        break;
-                }
-            }
-        }
-        else
-            dbPlayer.setUnCrown(levelId);
-
-
+        if(dbPlayer.getTimescore() < score)
+            dbPlayer.setTimescore(score);
         if(apiHelper.isSignedIn()) {
+            apiHelper.updateLeaderboard(getString(R.string.leaderboard_time_challenge), score);
             if (dbPlayer.getScore() >= 2000)
                 apiHelper.unlockAchi(getString(R.string.achievement_points_master));
             if (dbPlayer.getScore() >= 25000)
@@ -229,4 +197,36 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
+    private CountDownTimer setUpTimer(int time){
+        return new CountDownTimer(time, 100) {
+
+            public void onTick(long millisUntilFinished) {
+                double d = millisUntilFinished * 1.0 / 1000;
+                timeLeft = millisUntilFinished;
+                if(d<5)
+                    timeText.setTextColor(Color.RED);
+                timeText.setText(String.format("%s",d));
+            }
+
+            public void onFinish() {
+                timeText.setText("0.0");
+                setButtonsActive(false);
+
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(PlayTimeActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar);
+                } else {
+                    builder = new AlertDialog.Builder(PlayTimeActivity.this);
+                }
+                builder.setTitle("Stop!")
+                        .setMessage("Score : \n \n" + Integer.toString(score))
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        }).setCancelable(false)
+                        .show();
+            }
+        };
+    }
 }

@@ -17,7 +17,37 @@
         android:layout_above="@+id/adView">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/layou1"
+            android:layout_width="0dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
+        <LinearLayout
+            android:id="@+id/layou2"
+            android:layout_marginRight="5dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
+        <LinearLayout
+            android:id="@+id/layou3"
+            android:layout_marginRight="5dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
+        <LinearLayout
+            android:id="@+id/layou4"
+            android:layout_marginRight="5dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
+        <LinearLayout
+            android:id="@+id/layou5"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
             android:orientation="vertical"></LinearLayout>
     </LinearLayout>
