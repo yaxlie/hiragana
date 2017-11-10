@@ -4,6 +4,7 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="signin_failure">signin_failure</string>
+    <string name="ad_id">ca-app-pub-3328556817210979/2235158641</string>
 
 
 </resources>

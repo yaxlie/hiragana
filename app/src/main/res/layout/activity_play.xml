@@ -58,14 +58,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="60dp"
-        android:layout_below="@+id/titleTextView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
 
-        android:id="@+id/linearLayout3">
+        android:id="@+id/linearLayout3"
+        android:layout_above="@+id/linearLayout4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <com.mlmg.hiragana.ui.SquareButton
             android:id="@+id/button1"
@@ -94,12 +93,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/linearLayout3"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/linearLayout4"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout4">
+        android:layout_alignParentStart="true">
 
         <com.mlmg.hiragana.ui.SquareButton
             android:id="@+id/button3"
@@ -128,22 +128,18 @@
         android:id="@+id/buttonEnd"
         android:layout_width="60dp"
         android:layout_height="35dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/linearLayout4"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="15dp"
         android:background="@color/buttonColor"
-        android:drawableBottom="@android:drawable/ic_media_next" />
+        android:drawableBottom="@android:drawable/ic_media_next"
+        android:layout_below="@+id/titleTextView"
+        android:layout_centerHorizontal="true" />
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         ads:adSize="BANNER"
-        ads:adUnitId=""
-        android:layout_below="@+id/titleTextView"
+        ads:adUnitId="@string/ad_id"
+        android:layout_above="@+id/linearLayout3"
         android:layout_centerHorizontal="true">
     </com.google.android.gms.ads.AdView>
 

@@ -1,9 +1,11 @@
 package com.mlmg.hiragana;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //connectGoogle();
         apiHelper.startSignInIntent();
 
+        apiHelper.loadAdd();
         initiateUI();
         updateScore();
         setCrowns();
@@ -152,7 +155,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-
+        Button rateButton = (Button) findViewById(R.id.rateButton);
+        rateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("market://details?id=" + getPackageName());
+                Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                try {
+                    startActivity(myAppLinkToMarket);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(MainActivity.this, " unable to find market app", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void updateScore(){

@@ -32,9 +32,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PlayActivity" />
-        <activity android:name=".InfoActivity" />
-        <activity android:name=".PlayTimeActivity"></activity>
+        <activity
+            android:name=".PlayActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".InfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".PlayTimeActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

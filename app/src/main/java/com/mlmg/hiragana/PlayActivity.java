@@ -48,6 +48,7 @@ public class PlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_play);
 
         apiHelper.signInSilently();
+        apiHelper.loadAdd();
 
         Bundle b = getIntent().getExtras();
         levelId = b!=null? b.getInt("id"): 1;

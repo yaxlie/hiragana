@@ -22,7 +22,7 @@ import java.util.Random;
 
 public class PlayTimeActivity extends AppCompatActivity {
 
-    private static int startTime = 30;
+    private static int startTime = 35;
     private static int correctPoints = 12;
     private static int timePenalty = 5000;
 
@@ -79,21 +79,23 @@ public class PlayTimeActivity extends AppCompatActivity {
             }
         });
 
+        apiHelper.loadAdd();
         timeText.setText(Integer.toString(startTime));
         scoreText.setText(Integer.toString(score));
 
         bestScore = dbPlayer.getTimescore();
         TextView textBest = (TextView) findViewById(R.id.textBestScore);
-        textBest.setText("Best Score : " +Integer.toString(bestScore));
+        textBest.setText("Best Score : " +Integer.toString(dbPlayer.getTimescore()));
 
         setScene();
 
-        timer = setUpTimer(30000).start();
+        timer = setUpTimer(startTime * 1000).start();
 
     }
 
     @Override
     public void onBackPressed() {
+        timer.cancel();
         over();
         super.onBackPressed();
     }
@@ -222,6 +224,7 @@ public class PlayTimeActivity extends AppCompatActivity {
                         .setMessage("Score : \n \n" + Integer.toString(score))
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                over();
                                 finish();
                             }
                         }).setCancelable(false)
