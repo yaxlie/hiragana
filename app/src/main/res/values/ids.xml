@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_id">339325734786</string>
+    <!-- package_name -->
+    <string name="package_name" translatable="false">com.mlmg.hiragana</string>
+    <!-- achievement Level 1 -->
+    <string name="achievement_level_1" translatable="false">CgkIgp-Pi_AJEAIQAg</string>
+    <!-- achievement Level 2 -->
+    <string name="achievement_level_2" translatable="false">CgkIgp-Pi_AJEAIQAw</string>
+    <!-- achievement Level 3 -->
+    <string name="achievement_level_3" translatable="false">CgkIgp-Pi_AJEAIQBA</string>
+    <!-- achievement Level 4 -->
+    <string name="achievement_level_4" translatable="false">CgkIgp-Pi_AJEAIQBQ</string>
+    <!-- achievement Level 5 -->
+    <string name="achievement_level_5" translatable="false">CgkIgp-Pi_AJEAIQBg</string>
+    <!-- achievement Sensei -->
+    <string name="achievement_sensei" translatable="false">CgkIgp-Pi_AJEAIQBw</string>
+    <!-- achievement Points Master -->
+    <string name="achievement_points_master" translatable="false">CgkIgp-Pi_AJEAIQCA</string>
+    <!-- achievement Points... whut? -->
+    <string name="achievement_points..._whut" translatable="false">CgkIgp-Pi_AJEAIQCg</string>
+    <!-- leaderboard Points -->
+    <string name="leaderboard_points" translatable="false">CgkIgp-Pi_AJEAIQAQ</string>
+    <!-- leaderboard Time Challenge -->
+    <string name="leaderboard_time_challenge" translatable="false">CgkIgp-Pi_AJEAIQCw</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#000759</color>
+    <color name="colorAccent">#ffffff</color>
+
+    <color name="level1">#fff2b3</color>
+    <color name="level2">#ffe45e</color>
+    <color name="level3">#ffd71c</color>
+    <color name="level4">#ffb300</color>
+    <color name="level5">#ff8800</color>
+    <color name="level6">#ff5500</color>
+    <color name="levelTime">#ff2600</color>
+
+    <color name="buttonColor">#60f1f1f1</color>
+    <color name="buttonWrong">#60ff0000</color>
+    <color name="buttonCorrect">#6011ff00</color>
+    <color name="locked">#a6000000</color>
+
+    <color name="black_overlay">#66000000</color>
+</resources>
