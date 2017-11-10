@@ -36,7 +36,6 @@ public class PlayTimeActivity extends AppCompatActivity {
     private int bestScore;
 
     private Button[] button = new Button[4];
-    private Button buttonEnd;
 
     private Letter letter = null;
 
@@ -68,16 +67,6 @@ public class PlayTimeActivity extends AppCompatActivity {
         button[1] = (Button) findViewById(R.id.button2);
         button[2] = (Button) findViewById(R.id.button3);
         button[3] = (Button) findViewById(R.id.button4);
-
-        buttonEnd = (Button) findViewById(R.id.buttonEnd);
-        buttonEnd.setVisibility(View.GONE);
-        buttonEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                over();
-                finish();
-            }
-        });
 
         apiHelper.loadAdd();
         timeText.setText(Integer.toString(startTime));
@@ -207,7 +196,7 @@ public class PlayTimeActivity extends AppCompatActivity {
                 timeLeft = millisUntilFinished;
                 if(d<5)
                     timeText.setTextColor(Color.RED);
-                timeText.setText(String.format("%s",d));
+                timeText.setText(String.format( "%.2f", d ));
             }
 
             public void onFinish() {

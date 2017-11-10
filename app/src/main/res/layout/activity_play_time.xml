@@ -119,6 +119,7 @@
         android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         ads:adSize="BANNER"
         ads:adUnitId="@string/ad_id"
         android:layout_above="@+id/linearLayout3"
@@ -131,7 +132,7 @@
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:layout_marginBottom="10dp"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/titleTextView"
         android:layout_centerHorizontal="true" />
 
 </android.widget.RelativeLayout>
