@@ -184,19 +184,27 @@ public class PlayActivity extends AppCompatActivity {
     private void over(){
         if(score >= maxToGet * maxAttempt){
             dbPlayer.setCrown(levelId);
-            boolean unlock = true;
-            for(int i=levelId; i>0; i--){
-                if(!dbPlayer.isCrowned(i)) {
-                    unlock = false;
+            boolean unlockSix = false;
+
+            for(int i=1; i<6; i++){
+                if(dbPlayer.isCrowned(i) && !dbPlayer.isUnlocked(i+1)) {
+                    dbPlayer.unlockLevel(i+1);
+                    dbPlayer.addPoints(50*(i+1));
+                    if(i==5)
+                        unlockSix = true;
+                    if(apiHelper.isSignedIn()) {
+                        apiHelper.progressAchi(getString(R.string.achievement_points_master), 50*(i+1));
+                        apiHelper.progressAchi(getString(R.string.achievement_points____whut), 5*(i+1));
+                        apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
+                    }
+                    break;
                 }
-            }
-            if(unlock && !dbPlayer.isUnlocked(levelId+1)){
-                dbPlayer.unlockLevel(levelId+1);
-                dbPlayer.addPoints(50*levelId+1);
+                if(!dbPlayer.isCrowned(i))
+                    break;
             }
 
             if(apiHelper.isSignedIn()) {
-                if (unlock && levelId == 5)
+                if (unlockSix)
                     apiHelper.unlockAchi(getString(R.string.achievement_sensei));
 
                 switch (levelId) {
