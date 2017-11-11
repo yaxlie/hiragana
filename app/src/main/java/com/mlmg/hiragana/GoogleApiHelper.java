@@ -133,10 +133,12 @@ public class GoogleApiHelper {
                     .addOnSuccessListener(new OnSuccessListener<AnnotatedData<LeaderboardScore>>() {
                         @Override
                         public void onSuccess(AnnotatedData<LeaderboardScore> leaderboardScoreAnnotatedData) {
-                            long mPoints = leaderboardScoreAnnotatedData.get().getRawScore();
-                            PlayerDatabase db = new PlayerDatabase(HelperApplication.getAppContext());
-                            if (db.getScore() < (int) mPoints) {
-                                db.setScore((int) mPoints);
+                            if (leaderboardScoreAnnotatedData.get()!=null) {
+                                long mPoints = leaderboardScoreAnnotatedData.get().getRawScore();
+                                PlayerDatabase db = new PlayerDatabase(HelperApplication.getAppContext());
+                                if (db.getScore() < (int) mPoints) {
+                                    db.setScore((int) mPoints);
+                                }
                             }
                         }
                     });
