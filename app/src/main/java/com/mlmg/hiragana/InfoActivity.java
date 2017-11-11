@@ -48,9 +48,6 @@ public class InfoActivity extends AppCompatActivity {
                 if(lString.equals("MI") || lString.equals("RU") || lString.equals("ME")){
                     makeSpace(i);
                 }
-                if(lString.equals("U")){
-                    makeSpace(i);
-                }
                 View child = getLayoutInflater().inflate(R.layout.letters, null);
                 TextView h = (TextView) child.findViewById(R.id.textH);
                 TextView l = (TextView) child.findViewById(R.id.textL);

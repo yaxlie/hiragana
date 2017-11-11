@@ -18,7 +18,7 @@ public class HiraganaDatabase extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "hiragana.data";
 
     public HiraganaDatabase(Context context) {
-        super(context, DATABASE_NAME, null, 4);
+        super(context, DATABASE_NAME, null, 5);
         //SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -78,6 +78,7 @@ public class HiraganaDatabase extends SQLiteOpenHelper {
         insert(db, "ぬ", "NU", HiraganaTable.Category.U);
         insert(db, "つ", "TSU", HiraganaTable.Category.U);
         insert(db, "す", "SU", HiraganaTable.Category.U);
+        insert(db, "く", "KU", HiraganaTable.Category.U);
         insert(db, "う", "U", HiraganaTable.Category.U);
 
         insert(db, "うぇ", "WE", HiraganaTable.Category.E);
