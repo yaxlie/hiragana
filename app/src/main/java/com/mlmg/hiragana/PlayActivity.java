@@ -149,7 +149,7 @@ public class PlayActivity extends AppCompatActivity {
 
         if(apiHelper.isSignedIn()) {
             apiHelper.progressAchi(getString(R.string.achievement_points_master), pointsToGet);
-            apiHelper.progressAchi(getString(R.string.achievement_points____whut), pointsToGet);
+            apiHelper.progressAchi(getString(R.string.achievement_points____whut), pointsToGet/10);
             apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
         }
 

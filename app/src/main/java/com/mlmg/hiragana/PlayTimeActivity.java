@@ -150,7 +150,7 @@ public class PlayTimeActivity extends AppCompatActivity {
 
         if(apiHelper.isSignedIn()) {
             apiHelper.progressAchi(getString(R.string.achievement_points_master), correctPoints);
-            apiHelper.progressAchi(getString(R.string.achievement_points____whut), correctPoints);
+            apiHelper.progressAchi(getString(R.string.achievement_points____whut), correctPoints/10);
             apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
         }
 
