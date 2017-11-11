@@ -81,6 +81,7 @@ public class PlayActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        over();
         super.onBackPressed();
     }
 

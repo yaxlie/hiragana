@@ -120,7 +120,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
 
     public void unlockLevel(int uid){
         SQLiteDatabase db = this.getWritableDatabase();
-        if(uid<5) {
+        if(uid<6) {
             db.execSQL("UPDATE levels set unlocked = 1 where uid = " + Integer.toString(uid));
             db.execSQL("UPDATE levels set crown = 0");
         }
