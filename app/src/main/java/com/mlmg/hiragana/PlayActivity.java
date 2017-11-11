@@ -81,7 +81,6 @@ public class PlayActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        over();
         super.onBackPressed();
     }
 
@@ -162,6 +161,7 @@ public class PlayActivity extends AppCompatActivity {
             }, levelId!=6? 700: 100);
         }
         else{
+            over();
             buttonEnd.setVisibility(View.VISIBLE);
         }
 
