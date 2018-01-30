@@ -1,5 +1,7 @@
 package com.mlmg.hiragana;
 
+import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
@@ -7,13 +9,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mlmg.hiragana.database.HiraganaDatabase;
 import com.mlmg.hiragana.database.HiraganaTable;
 import com.mlmg.hiragana.database.PlayerDatabase;
 
+import java.io.File;
 import java.util.Random;
 
 public class PlayActivity extends AppCompatActivity {
@@ -24,6 +30,8 @@ public class PlayActivity extends AppCompatActivity {
     private TextView attemptText;
     private TextView titleText;
     private TextView pointsText;
+
+    private RelativeLayout mainLL;
 
     private Button[] button = new Button[4];
     private Button buttonEnd;
@@ -46,6 +54,9 @@ public class PlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+
+        mainLL = (RelativeLayout) findViewById(R.id.mainView);
+        mainLL.setAlpha(0);
 
         apiHelper.signInSilently();
         apiHelper.loadAdd();
@@ -77,6 +88,21 @@ public class PlayActivity extends AppCompatActivity {
 
         refreshText();
         setScene();
+        Animation anim = AnimationUtils.loadAnimation(PlayActivity.this, R.anim.fadein_anim);
+        anim.setAnimationListener(new Animation.AnimationListener(){
+            @Override
+            public void onAnimationStart(Animation arg0) {
+                mainLL.setAlpha(1);
+            }
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+            }
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                mainLL.setAlpha(1);
+            }
+        });
+        mainLL.startAnimation(anim);
     }
 
     @Override
@@ -140,11 +166,24 @@ public class PlayActivity extends AppCompatActivity {
 
     }
 
+
+    public void audioPlayer(String fileName){
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(fileName,"raw",getPackageName()));
+
+        try {
+            //mp.prepare();
+            mp.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void correctAnswer() {
         score += pointsToGet;
         dbPlayer.addPoints(pointsToGet);
         pointsToGet = maxToGet;
         setButtonsActive(false);
+        audioPlayer(letter.getLetter_l().toLowerCase());
 
 
         if(apiHelper.isSignedIn()) {
@@ -164,6 +203,8 @@ public class PlayActivity extends AppCompatActivity {
         else{
             over();
             buttonEnd.setVisibility(View.VISIBLE);
+            Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_anim_endless);
+            buttonEnd.startAnimation(scaleAnim);
         }
 
     }

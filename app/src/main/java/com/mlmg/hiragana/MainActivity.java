@@ -8,14 +8,19 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +44,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         , GoogleApiClient.OnConnectionFailedListener {
 
     private PlayerDatabase dbPlayer;
+    private RelativeLayout mainLL;
     private Button buttonPlay[] = new Button[6];
+    private Button timeButton;
     private GoogleApiHelper apiHelper = new GoogleApiHelper(MainActivity.this);
+    private Animation scaleAnim;
 
     //private GoogleSignInOptions gso;
     private GoogleApiClient apiClient;
@@ -51,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dbPlayer = new PlayerDatabase(HelperApplication.getAppContext());
+
+        mainLL = (RelativeLayout) findViewById(R.id.mainView);
+        scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_anim);
 
         //gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).build();
         //connectGoogle();
@@ -66,10 +77,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onResume() {
         super.onResume();
+        mainLL.setAlpha(1);
         apiHelper.signInSilently();
         updateScore();
         setCrowns();
         activateLevels();
+        doAnims();
     }
 
     @Override
@@ -105,12 +118,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         for(int i=0; i<6; i++){
             final int finalI = i;
+            final int finalI1 = i;
             buttonPlay[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(MainActivity.this, PlayActivity.class);
-                    intent.putExtra("id", finalI+1);
-                    startActivity(intent);
+                    Drawable drawable = buttonPlay[finalI1].getBackground();
+                    drawable.setColorFilter(getResources().getColor(R.color.selected), PorterDuff.Mode.LIGHTEN);
+                    buttonPlay[finalI1].setBackground(drawable);
+
+                    Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadeout_anim);
+                    anim.setAnimationListener(new Animation.AnimationListener(){
+                        @Override
+                        public void onAnimationStart(Animation arg0) {
+                        }
+                        @Override
+                        public void onAnimationRepeat(Animation arg0) {
+                        }
+                        @Override
+                        public void onAnimationEnd(Animation arg0) {
+                            Drawable drawable = buttonPlay[finalI1].getBackground();
+                            drawable.setColorFilter(null);
+                            buttonPlay[finalI1].setBackground(drawable);
+
+                            mainLL.setAlpha(0);
+                            Intent intent = new Intent(MainActivity.this, PlayActivity.class);
+                            intent.putExtra("id", finalI+1);
+                            startActivity(intent);
+                        }
+                    });
+                    mainLL.startAnimation(anim);
                 }
             });
         }
@@ -146,12 +182,36 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        Button timeButton = (Button) findViewById(R.id.buttonTime);
+        timeButton = (Button) findViewById(R.id.buttonTime);
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PlayTimeActivity.class);
-                startActivity(intent);
+
+                Drawable drawable = timeButton.getBackground();
+                drawable.setColorFilter(getResources().getColor(R.color.selected), PorterDuff.Mode.LIGHTEN);
+                timeButton.setBackground(drawable);
+
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadeout_anim);
+                anim.setAnimationListener(new Animation.AnimationListener(){
+                    @Override
+                    public void onAnimationStart(Animation arg0) {
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation arg0) {
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation arg0) {
+
+                        Drawable drawable = timeButton.getBackground();
+                        drawable.setColorFilter(null);
+                        timeButton.setBackground(drawable);
+
+                        mainLL.setAlpha(0);
+                        Intent intent = new Intent(MainActivity.this, PlayTimeActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                mainLL.startAnimation(anim);
             }
         });
 
@@ -205,6 +265,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             if(!dbPlayer.isUnlocked(i+1))
                 buttonPlay[i].setBackground(drawable);
         }
+    }
+
+    private void doAnims(){
+        for(int i=0;i<5;i++){
+            if(dbPlayer.isUnlocked(i+1) && !dbPlayer.isCrowned(i+1))
+                if(!dbPlayer.isCrowned(i+1)) {
+                    LinearLayout layout = (LinearLayout)buttonPlay[i].getParent();
+                    layout.startAnimation(scaleAnim);
+                }
+            }
+        buttonPlay[5].startAnimation(scaleAnim);
+        timeButton.startAnimation(scaleAnim);
     }
 
     private void setCrowns(){

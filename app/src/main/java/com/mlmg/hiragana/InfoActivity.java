@@ -4,7 +4,10 @@ import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mlmg.hiragana.database.HiraganaDatabase;
@@ -14,15 +17,36 @@ import java.util.HashMap;
 public class InfoActivity extends AppCompatActivity {
 
     private LinearLayout layout[] = new LinearLayout[5];
+    private RelativeLayout mainLL;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
+
+        mainLL = (RelativeLayout) findViewById(R.id.mainView);
+        mainLL.setAlpha(0);
+
         GoogleApiHelper apiHelper = new GoogleApiHelper(InfoActivity.this);
         apiHelper.loadAdd();
         addLetters();
 
+        Animation anim = AnimationUtils.loadAnimation(InfoActivity.this, R.anim.fadein_anim);
+        anim.setAnimationListener(new Animation.AnimationListener(){
+            @Override
+            public void onAnimationStart(Animation arg0) {
+                mainLL.setAlpha(1);
+            }
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+            }
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                mainLL.setAlpha(1);
+            }
+        });
+        mainLL.startAnimation(anim);
 
     }
 

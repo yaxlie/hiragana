@@ -12,6 +12,8 @@
     <color name="level6">#ff5500</color>
     <color name="levelTime">#ff2600</color>
 
+    <color name="selected">#f7ff00</color>
+
     <color name="buttonColor">#60f1f1f1</color>
     <color name="buttonWrong">#60ff0000</color>
     <color name="buttonCorrect">#6011ff00</color>

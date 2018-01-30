@@ -2,6 +2,7 @@ package com.mlmg.hiragana;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -11,7 +12,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mlmg.hiragana.database.HiraganaDatabase;
@@ -33,6 +37,8 @@ public class PlayTimeActivity extends AppCompatActivity {
     private TextView titleText;
     private TextView timeText;
 
+    private RelativeLayout mainLL;
+
     private int bestScore;
 
     private Button[] button = new Button[4];
@@ -52,6 +58,9 @@ public class PlayTimeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_time);
+
+        mainLL = (RelativeLayout) findViewById(R.id.mainView);
+        mainLL.setAlpha(0);
 
         apiHelper.signInSilently();
         timeLeft = startTime;
@@ -78,7 +87,22 @@ public class PlayTimeActivity extends AppCompatActivity {
 
         setScene();
 
-        timer = setUpTimer(startTime * 1000).start();
+        Animation anim = AnimationUtils.loadAnimation(PlayTimeActivity.this, R.anim.fadein_anim);
+        anim.setAnimationListener(new Animation.AnimationListener(){
+            @Override
+            public void onAnimationStart(Animation arg0) {
+                mainLL.setAlpha(1);
+            }
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+            }
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                mainLL.setAlpha(1);
+                timer = setUpTimer(startTime * 1000).start();
+            }
+        });
+        mainLL.startAnimation(anim);
 
     }
 
@@ -142,10 +166,22 @@ public class PlayTimeActivity extends AppCompatActivity {
 
     }
 
+    public void audioPlayer(String fileName){
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(fileName,"raw",getPackageName()));
+
+        try {
+            //mp.prepare();
+            mp.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void correctAnswer() {
         scoreText.setText(Integer.toString(++score));
         dbPlayer.addPoints(correctPoints);
         setButtonsActive(false);
+        audioPlayer("correct");
 
 
         if(apiHelper.isSignedIn()) {
@@ -170,6 +206,7 @@ public class PlayTimeActivity extends AppCompatActivity {
     }
 
     private void wrongAnswer(){
+        //audioPlayer("wrong");
         timer.cancel();
         timeLeft -= timePenalty;
         timer = setUpTimer((int)timeLeft).start();

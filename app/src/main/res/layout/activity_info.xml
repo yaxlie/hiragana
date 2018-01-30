@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
@@ -11,46 +12,50 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
         android:layout_height="match_parent"
+        android:layout_above="@+id/adView"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        android:layout_above="@+id/adView">
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
         <LinearLayout
             android:id="@+id/layou1"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:layout_height="match_parent"
             android:orientation="vertical"></LinearLayout>
+
         <LinearLayout
             android:id="@+id/layou2"
-            android:layout_marginRight="5dp"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
             android:orientation="vertical"></LinearLayout>
+
         <LinearLayout
             android:id="@+id/layou3"
-            android:layout_marginRight="5dp"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
             android:orientation="vertical"></LinearLayout>
+
         <LinearLayout
             android:id="@+id/layou4"
-            android:layout_marginRight="5dp"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
             android:orientation="vertical"></LinearLayout>
+
         <LinearLayout
             android:id="@+id/layou5"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="vertical"></LinearLayout>
     </LinearLayout>
 
@@ -58,10 +63,9 @@
         android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/ad_id">
-    </com.google.android.gms.ads.AdView>
+        ads:adUnitId="@string/ad_id"></com.google.android.gms.ads.AdView>
 
 </android.widget.RelativeLayout>
