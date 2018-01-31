@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private RelativeLayout mainLL;
     private Button buttonPlay[] = new Button[6];
     private Button timeButton;
+    private Button textPlayButton;
     private GoogleApiHelper apiHelper = new GoogleApiHelper(MainActivity.this);
     private Animation scaleAnim;
 
@@ -215,6 +216,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
+        textPlayButton = (Button) findViewById(R.id.buttonText);
+        textPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Drawable drawable = textPlayButton.getBackground();
+                drawable.setColorFilter(getResources().getColor(R.color.selected), PorterDuff.Mode.LIGHTEN);
+                textPlayButton.setBackground(drawable);
+
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadeout_anim);
+                anim.setAnimationListener(new Animation.AnimationListener(){
+                    @Override
+                    public void onAnimationStart(Animation arg0) {
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation arg0) {
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation arg0) {
+
+                        Drawable drawable = textPlayButton.getBackground();
+                        drawable.setColorFilter(null);
+                        textPlayButton.setBackground(drawable);
+
+                        mainLL.setAlpha(0);
+                        Intent intent = new Intent(MainActivity.this, PlayTextActivity.class);
+                        intent.putExtra("id", 6);
+                        startActivity(intent);
+                    }
+                });
+                mainLL.startAnimation(anim);
+            }
+        });
+
         Button rateButton = (Button) findViewById(R.id.rateButton);
         rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         buttonPlay[5].startAnimation(scaleAnim);
         timeButton.startAnimation(scaleAnim);
+        textPlayButton.startAnimation(scaleAnim);
     }
 
     private void setCrowns(){

@@ -1,6 +1,5 @@
 package com.mlmg.hiragana;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
@@ -19,53 +18,46 @@ import com.mlmg.hiragana.database.HiraganaDatabase;
 import com.mlmg.hiragana.database.HiraganaTable;
 import com.mlmg.hiragana.database.PlayerDatabase;
 
-import java.io.File;
 import java.util.Random;
 
 public class PlayActivity extends AppCompatActivity {
 
-    private static int maxToGet = 10;
-    private static int maxAttempt = 15;
+    protected static int maxToGet = 10;
+    protected static int maxAttempt = 15;
 
-    private TextView attemptText;
-    private TextView titleText;
-    private TextView pointsText;
+    protected TextView attemptText;
+    protected TextView titleText;
+    protected TextView pointsText;
 
-    private RelativeLayout mainLL;
+    protected RelativeLayout mainLL;
 
-    private Button[] button = new Button[4];
-    private Button buttonEnd;
+    protected Button[] button = new Button[4];
+    protected Button buttonEnd;
 
-    private Letter letter = null;
+    protected Letter letter = null;
 
-    private int levelId;
+    protected int levelId;
 
-    private int pointsToGet = maxToGet;
-    private int attempt = 1;
-    private int score = 0;
+    protected int pointsToGet = maxToGet;
+    protected int attempt = 1;
+    protected int score = 0;
 
-    private Handler handler = new Handler();
+    protected Handler handler = new Handler();
 
-    private HiraganaDatabase dbHiragana;
-    private PlayerDatabase dbPlayer;
-    private GoogleApiHelper apiHelper = new GoogleApiHelper(PlayActivity.this);
+    protected HiraganaDatabase dbHiragana;
+    protected PlayerDatabase dbPlayer;
+    protected GoogleApiHelper apiHelper = new GoogleApiHelper(PlayActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
-        mainLL = (RelativeLayout) findViewById(R.id.mainView);
-        mainLL.setAlpha(0);
-
-        apiHelper.signInSilently();
-        apiHelper.loadAdd();
-
+        initialize();
+        manageEndButton();
+        
         Bundle b = getIntent().getExtras();
         levelId = b!=null? b.getInt("id"): 1;
-
-        dbHiragana = new HiraganaDatabase(HelperApplication.getAppContext());
-        dbPlayer = new PlayerDatabase(HelperApplication.getAppContext());
 
         attemptText = (TextView) findViewById(R.id.attemptTextView);
         titleText = (TextView) findViewById(R.id.titleTextView);
@@ -76,6 +68,29 @@ public class PlayActivity extends AppCompatActivity {
         button[2] = (Button) findViewById(R.id.button3);
         button[3] = (Button) findViewById(R.id.button4);
 
+        refreshText();
+        setScene();
+    }
+
+    @Override
+    public void onBackPressed() {
+        over();
+        super.onBackPressed();
+    }
+
+    protected void losujMain(){
+        int letterUid = letter!=null? letter.getUid(): -1;
+        boolean losuj = true;
+
+        while(losuj) {
+            letter = levelId != HiraganaTable.Category.ALL ? dbHiragana.getRandomCategory(levelId) :
+                    dbHiragana.getRandomAll();
+            losuj = (letter.getUid() == letterUid);
+        }
+        titleText.setText(letter.getLetter_h());
+    }
+
+    protected void manageEndButton(){
         buttonEnd = (Button) findViewById(R.id.buttonEnd);
         buttonEnd.setVisibility(View.GONE);
         buttonEnd.setOnClickListener(new View.OnClickListener() {
@@ -85,9 +100,16 @@ public class PlayActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
 
-        refreshText();
-        setScene();
+    protected void initialize(){
+        mainLL = (RelativeLayout) findViewById(R.id.mainView);
+        mainLL.setAlpha(0);
+        
+        apiHelper.signInSilently();
+        apiHelper.loadAdd();
+        dbHiragana = new HiraganaDatabase(HelperApplication.getAppContext());
+        dbPlayer = new PlayerDatabase(HelperApplication.getAppContext());
         Animation anim = AnimationUtils.loadAnimation(PlayActivity.this, R.anim.fadein_anim);
         anim.setAnimationListener(new Animation.AnimationListener(){
             @Override
@@ -105,23 +127,7 @@ public class PlayActivity extends AppCompatActivity {
         mainLL.startAnimation(anim);
     }
 
-    @Override
-    public void onBackPressed() {
-        over();
-        super.onBackPressed();
-    }
-
-    private void setScene(){
-        int letterUid = letter!=null? letter.getUid(): -1;
-        boolean losuj = true;
-
-        while(losuj) {
-            letter = levelId != HiraganaTable.Category.ALL ? dbHiragana.getRandomCategory(levelId) :
-                    dbHiragana.getRandomAll();
-            losuj = (letter.getUid() == letterUid);
-        }
-        titleText.setText(letter.getLetter_h());
-
+    protected void setPrzyciski(){
         for(int i=0; i<4; i++){
             button[i].setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.buttonColor));
             button[i].setText("");
@@ -163,7 +169,11 @@ public class PlayActivity extends AppCompatActivity {
                 });
             }
         }
+    }
 
+    protected void setScene(){
+        losujMain();
+        setPrzyciski();
     }
 
 
@@ -178,21 +188,19 @@ public class PlayActivity extends AppCompatActivity {
         }
     }
 
-    private void correctAnswer() {
+    protected void updatePoints(){
         score += pointsToGet;
         dbPlayer.addPoints(pointsToGet);
         pointsToGet = maxToGet;
-        setButtonsActive(false);
-        audioPlayer(letter.getLetter_l().toLowerCase());
-
 
         if(apiHelper.isSignedIn()) {
             apiHelper.progressAchi(getString(R.string.achievement_points_master), pointsToGet);
             apiHelper.progressAchi(getString(R.string.achievement_points____whut), pointsToGet/10);
             apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
         }
+    }
 
-        refreshText();
+    protected void finalizeCorrectAnswer(){
         if (++attempt <= maxAttempt || levelId==6) {
             handler.postDelayed(new Runnable() {
                 public void run() {
@@ -206,24 +214,32 @@ public class PlayActivity extends AppCompatActivity {
             Animation scaleAnim = AnimationUtils.loadAnimation(this, R.anim.scale_anim_endless);
             buttonEnd.startAnimation(scaleAnim);
         }
-
     }
 
-    private void refreshText(){
+    protected void correctAnswer() {
+        setButtonsActive(false);
+        audioPlayer(letter.getLetter_l().toLowerCase());
+
+        updatePoints();
+        refreshText();
+        finalizeCorrectAnswer();
+    }
+
+    protected void refreshText(){
         pointsText.setText(Integer.toString(score));
         attemptText.setText(levelId!=6? Integer.toString(attempt) + "/" + Integer.toString(maxAttempt)
                 : Integer.toString(attempt));
     }
-    private void setButtonsActive(boolean b){
+    protected void setButtonsActive(boolean b){
         for(int i=0; i<4; i++){
             button[i].setEnabled(b);
         }
     }
-    private void wrongAnswer(){
+    protected void wrongAnswer(){
         pointsToGet /= 2;
     }
 
-    private void over(){
+    protected void over(){
         if(score >= maxToGet * maxAttempt){
             dbPlayer.setCrown(levelId);
             boolean unlockSix = false;

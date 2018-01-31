@@ -13,8 +13,8 @@ android {
         applicationId "com.mlmg.hiragana"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 27
-        versionName "1.42"
+        versionCode 30
+        versionName "1.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -39,5 +39,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:11.6.0'
     testCompile 'junit:junit:4.12'
 }
+
 
 
