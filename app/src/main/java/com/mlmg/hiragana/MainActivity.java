@@ -20,6 +20,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button buttonPlay[] = new Button[6];
     private Button timeButton;
     private Button textPlayButton;
+    private Button duelButton;
+
     private GoogleApiHelper apiHelper = new GoogleApiHelper(MainActivity.this);
     private Animation scaleAnim;
 
@@ -250,6 +253,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
+        duelButton = (Button) findViewById(R.id.buttonDuel);
+        duelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Drawable drawable = duelButton.getBackground();
+                drawable.setColorFilter(getResources().getColor(R.color.selected), PorterDuff.Mode.LIGHTEN);
+                duelButton.setBackground(drawable);
+
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadeout_anim);
+                anim.setAnimationListener(new Animation.AnimationListener(){
+                    @Override
+                    public void onAnimationStart(Animation arg0) {
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation arg0) {
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation arg0) {
+
+                        Drawable drawable = duelButton.getBackground();
+                        drawable.setColorFilter(null);
+                        duelButton.setBackground(drawable);
+
+                        mainLL.setAlpha(0);
+                        Intent intent = new Intent(MainActivity.this, PlayDuelActivity.class);
+                        intent.putExtra("id", 6);
+                        startActivity(intent);
+                    }
+                });
+                mainLL.startAnimation(anim);
+            }
+        });
+
         Button rateButton = (Button) findViewById(R.id.rateButton);
         rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,6 +305,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private void updateScore(){
         TextView scoreText = (TextView)findViewById(R.id.pointsText);
         scoreText.setText(Integer.toString(dbPlayer.getScore()));
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar2);
+        progressBar.setProgress(dbPlayer.getBotLevel()+5);
     }
 
     private void activateLevels(){
@@ -313,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         buttonPlay[5].startAnimation(scaleAnim);
         timeButton.startAnimation(scaleAnim);
         textPlayButton.startAnimation(scaleAnim);
+        duelButton.startAnimation(scaleAnim);
     }
 
     private void setCrowns(){

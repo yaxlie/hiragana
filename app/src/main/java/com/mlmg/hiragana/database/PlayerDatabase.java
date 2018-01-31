@@ -15,7 +15,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "user.config";
 
     public PlayerDatabase(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 2);
         //SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -24,8 +24,11 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         db.execSQL("create table IF NOT EXISTS levels (uid INTEGER PRIMARY KEY, crown INTEGER, unlocked INTEGER)");
         db.execSQL("create table IF NOT EXISTS user (uid INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "score INTEGER, timescore INTEGER, premium INTEGER)");
+        db.execSQL("create table IF NOT EXISTS duel (uid INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "bot_level INTEGER, wins INTEGER, loses INTEGER)");
         setLevels(db);
         setUser(db);
+        setDuel(db);
     }
 
     @Override
@@ -33,6 +36,45 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS levels");
         db.execSQL("DROP TABLE IF EXISTS user");
         onCreate(db);
+    }
+
+    private void setDuel(SQLiteDatabase db) {
+        ContentValues values;
+        values = new ContentValues();
+        values.put("uid", 1);
+        values.put("bot_level", 50);
+        values.put("wins", 0);
+        values.put("loses", 0);
+        db.insert("duel", null, values);
+    }
+
+    public void winDuel(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE duel set wins = wins + 1 where uid = 1");
+        db.execSQL("UPDATE duel set bot_level = MIN(bot_level + 5, 95) where uid = 1");
+    }
+
+    public void loseDuel(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE duel set bot_level = MAX(bot_level - 5, 10) where uid = 1");
+    }
+
+    public int getLoses(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select loses from duel where uid = 1" , null);
+        return res.moveToNext()? res.getInt(0): 0;
+    }
+
+    public int getWins(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select wins from duel where uid = 1" , null);
+        return res.moveToNext()? res.getInt(0): 0;
+    }
+
+    public int getBotLevel(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select bot_level from duel where uid = 1" , null);
+        return res.moveToNext()? res.getInt(0): 0;
     }
 
     private void insertLevel(SQLiteDatabase db, int uid, int value, int unlocked) {

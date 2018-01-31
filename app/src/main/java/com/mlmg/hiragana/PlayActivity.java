@@ -38,6 +38,8 @@ public class PlayActivity extends AppCompatActivity {
 
     protected int levelId;
 
+    protected int correctIdButton;
+
     protected int pointsToGet = maxToGet;
     protected int attempt = 1;
     protected int score = 0;
@@ -59,15 +61,7 @@ public class PlayActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         levelId = b!=null? b.getInt("id"): 1;
 
-        attemptText = (TextView) findViewById(R.id.attemptTextView);
-        titleText = (TextView) findViewById(R.id.titleTextView);
-        pointsText = (TextView) findViewById(R.id.timeTextView);
-
-        button[0] = (Button) findViewById(R.id.button1);
-        button[1] = (Button) findViewById(R.id.button2);
-        button[2] = (Button) findViewById(R.id.button3);
-        button[3] = (Button) findViewById(R.id.button4);
-
+        setUi();
         refreshText();
         setScene();
     }
@@ -102,6 +96,16 @@ public class PlayActivity extends AppCompatActivity {
         });
     }
 
+    protected void setUi(){
+        attemptText = (TextView) findViewById(R.id.attemptTextView);
+        titleText = (TextView) findViewById(R.id.titleTextView);
+        pointsText = (TextView) findViewById(R.id.timeTextView);
+
+        button[0] = (Button) findViewById(R.id.button1);
+        button[1] = (Button) findViewById(R.id.button2);
+        button[2] = (Button) findViewById(R.id.button3);
+        button[3] = (Button) findViewById(R.id.button4);
+    }
     protected void initialize(){
         mainLL = (RelativeLayout) findViewById(R.id.mainView);
         mainLL.setAlpha(0);
@@ -140,6 +144,7 @@ public class PlayActivity extends AppCompatActivity {
 
         Random rand = new Random();
         final int r = rand.nextInt(4);
+        correctIdButton = r;
         button[r].setText(letter.getLetter_l());
         button[r].setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)

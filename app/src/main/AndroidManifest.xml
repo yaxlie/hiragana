@@ -38,7 +38,8 @@
         <activity
             android:name=".PlayTimeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".PlayTextActivity"></activity>
+        <activity android:name=".PlayTextActivity" />
+        <activity android:name=".PlayDuelActivity"></activity>
     </application>
 
 </manifest>

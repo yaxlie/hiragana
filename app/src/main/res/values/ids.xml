@@ -19,6 +19,10 @@
     <string name="achievement_points_master" translatable="false">CgkIgp-Pi_AJEAIQCA</string>
     <!-- achievement Points... whut? -->
     <string name="achievement_points..._whut" translatable="false">CgkIgp-Pi_AJEAIQCg</string>
+    <!-- achievement Duelist -->
+    <string name="achievement_duelist" translatable="false">CgkIgp-Pi_AJEAIQDA</string>
+    <!-- achievement Android trainer -->
+    <string name="achievement_android_trainer" translatable="false">CgkIgp-Pi_AJEAIQDQ</string>
     <!-- leaderboard Points -->
     <string name="leaderboard_points" translatable="false">CgkIgp-Pi_AJEAIQAQ</string>
     <!-- leaderboard Time Challenge -->
