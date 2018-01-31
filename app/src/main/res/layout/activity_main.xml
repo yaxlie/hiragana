@@ -298,7 +298,7 @@
         android:layout_above="@+id/adView"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:text="Rate our App"
+        android:text="Rate the App"
         android:textSize="8sp"
         app:backgroundTint="@color/colorPrimary" />
 

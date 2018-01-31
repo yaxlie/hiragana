@@ -110,6 +110,10 @@ public class PlayActivity extends AppCompatActivity {
         apiHelper.loadAdd();
         dbHiragana = new HiraganaDatabase(HelperApplication.getAppContext());
         dbPlayer = new PlayerDatabase(HelperApplication.getAppContext());
+        doAnimations();
+    }
+
+    protected void doAnimations(){
         Animation anim = AnimationUtils.loadAnimation(PlayActivity.this, R.anim.fadein_anim);
         anim.setAnimationListener(new Animation.AnimationListener(){
             @Override
@@ -178,9 +182,8 @@ public class PlayActivity extends AppCompatActivity {
 
 
     public void audioPlayer(String fileName){
-        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(fileName,"raw",getPackageName()));
-
         try {
+            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(fileName,"raw",getPackageName()));
             //mp.prepare();
             mp.start();
         } catch (Exception e) {

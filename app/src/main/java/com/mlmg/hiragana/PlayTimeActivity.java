@@ -24,7 +24,7 @@ import com.mlmg.hiragana.database.PlayerDatabase;
 
 import java.util.Random;
 
-public class PlayTimeActivity extends AppCompatActivity {
+public class PlayTimeActivity extends PlayActivity {
 
     private static int startTime = 35;
     private static int correctPoints = 12;
@@ -34,25 +34,13 @@ public class PlayTimeActivity extends AppCompatActivity {
     private long timeLeft;
 
     private TextView scoreText;
-    private TextView titleText;
     private TextView timeText;
-
-    private RelativeLayout mainLL;
 
     private int bestScore;
 
-    private Button[] button = new Button[4];
-
-    private Letter letter = null;
 
     private CountDownTimer timer;
-    private int score = 0;
 
-    private Handler handler = new Handler();
-
-    private HiraganaDatabase dbHiragana;
-    private PlayerDatabase dbPlayer;
-    private GoogleApiHelper apiHelper = new GoogleApiHelper(PlayTimeActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +71,7 @@ public class PlayTimeActivity extends AppCompatActivity {
 
         bestScore = dbPlayer.getTimescore();
         TextView textBest = (TextView) findViewById(R.id.textBestScore);
-        textBest.setText("Best Score : " +Integer.toString(dbPlayer.getTimescore()));
+        textBest.setText("Best Score : " +Integer.toString(bestScore));
 
         setScene();
 
@@ -108,76 +96,17 @@ public class PlayTimeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        timer.cancel();
-        over();
-        super.onBackPressed();
-    }
-
-    private void setScene(){
-        int letterUid = letter!=null? letter.getUid(): -1;
-        boolean losuj = true;
-
-        while(losuj) {
-            letter = dbHiragana.getRandomAll();
-            losuj = (letter.getUid() == letterUid);
-        }
-        titleText.setText(letter.getLetter_h());
-
-        for(int i=0; i<4; i++){
-            button[i].setBackgroundColor(ContextCompat.getColor(PlayTimeActivity.this, R.color.buttonColor));
-            button[i].setText("");
-            button[i].setEnabled(true);
-        }
-
-        Random rand = new Random();
-        final int r = rand.nextInt(4);
-        button[r].setText(letter.getLetter_l());
-        button[r].setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-            @Override
-            public void onClick(View v) {
-                button[r].setBackgroundColor(ContextCompat.getColor(PlayTimeActivity.this, R.color.buttonCorrect));
-                correctAnswer();
-            }
-        });
-
-        Letter letterNext = new Letter(letter);
-        for(int i=0; i<4; i++){
-            //todo do poprawy ten random, wykorzystac   int cSize = dbHiragana.getSizeCategory(levelId);
-            if(button[i].getText().equals("")){
-                while(letterNext.getLetter_l().equals(button[0].getText()) ||
-                        letterNext.getLetter_l().equals(button[1].getText()) ||
-                        letterNext.getLetter_l().equals(button[2].getText()) ||
-                        letterNext.getLetter_l().equals(button[3].getText())) {
-                    letterNext = dbHiragana.getRandomAll();
-                }
-                button[i].setText(letterNext.getLetter_l());
-                final int finalI = i;
-                button[i].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        button[finalI].setBackgroundColor(ContextCompat.getColor(PlayTimeActivity.this, R.color.buttonWrong));
-                        button[finalI].setEnabled(false);
-                        wrongAnswer();
-                    }
-                });
-            }
-        }
-
-    }
-
-    public void audioPlayer(String fileName){
-        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(fileName,"raw",getPackageName()));
-
         try {
-            //mp.prepare();
-            mp.start();
-        } catch (Exception e) {
-            e.printStackTrace();
+            timer.cancel();
+            over();
+            super.onBackPressed();
         }
+        catch (Exception e){}
     }
 
-    private void correctAnswer() {
+
+    @Override
+    protected void correctAnswer() {
         scoreText.setText(Integer.toString(++score));
         dbPlayer.addPoints(correctPoints);
         setButtonsActive(false);
@@ -190,22 +119,15 @@ public class PlayTimeActivity extends AppCompatActivity {
             apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
         }
 
-            handler.postDelayed(new Runnable() {
-                    public void run() {
-                        setScene();
-                    }
-                }, 50);
-        }
-
-
-
-    private void setButtonsActive(boolean b){
-        for(int i=0; i<4; i++){
-            button[i].setEnabled(b);
-        }
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                setScene();
+            }
+        }, 50);
     }
 
-    private void wrongAnswer(){
+    @Override
+    protected void wrongAnswer(){
         //audioPlayer("wrong");
         timer.cancel();
         timeLeft -= timePenalty;
@@ -213,7 +135,8 @@ public class PlayTimeActivity extends AppCompatActivity {
 
     }
 
-    private void over(){
+    @Override
+    protected void over(){
         if(dbPlayer.getTimescore() < score)
             dbPlayer.setTimescore(score);
         if(apiHelper.isSignedIn()) {
