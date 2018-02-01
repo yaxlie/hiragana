@@ -33,8 +33,8 @@ public class PlayerDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS levels");
-        db.execSQL("DROP TABLE IF EXISTS user");
+        //db.execSQL("DROP TABLE IF EXISTS levels");
+        //db.execSQL("DROP TABLE IF EXISTS user");
         onCreate(db);
     }
 
@@ -56,7 +56,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
 
     public void loseDuel(){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("UPDATE duel set bot_level = MAX(bot_level - 5, 10) where uid = 1");
+        //db.execSQL("UPDATE duel set bot_level = MAX(bot_level - 5, 10) where uid = 1");
     }
 
     public int getLoses(){

@@ -63,15 +63,14 @@
         android:background="@color/buttonColor"
         android:drawableBottom="@android:drawable/ic_media_next" />
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/layad"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/ad_id"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
-    </com.google.android.gms.ads.AdView>
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+    </LinearLayout>
 
     <EditText
         android:id="@+id/editText"

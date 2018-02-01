@@ -15,12 +15,15 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
 import com.mlmg.hiragana.database.HiraganaDatabase;
 import com.mlmg.hiragana.database.HiraganaTable;
 import com.mlmg.hiragana.database.PlayerDatabase;
+import com.mlmg.hiragana.ui.Ads;
 
 import java.util.Random;
 
@@ -65,7 +68,11 @@ public class PlayTimeActivity extends PlayActivity {
         button[2] = (Button) findViewById(R.id.button3);
         button[3] = (Button) findViewById(R.id.button4);
 
-        apiHelper.loadAdd();
+       // apiHelper.loadAdd("PlayTimeAds");
+        layAd = (LinearLayout) findViewById(R.id.layad);
+        helperApplication = (HelperApplication) getApplication();
+        helperApplication.loadAd(layAd);
+
         timeText.setText(Integer.toString(startTime));
         scoreText.setText(Integer.toString(score));
 

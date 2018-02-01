@@ -11,12 +11,15 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
 import com.mlmg.hiragana.database.HiraganaDatabase;
 import com.mlmg.hiragana.database.HiraganaTable;
 import com.mlmg.hiragana.database.PlayerDatabase;
+import com.mlmg.hiragana.ui.Ads;
 
 import java.util.Random;
 
@@ -33,6 +36,9 @@ public class PlayActivity extends AppCompatActivity {
 
     protected Button[] button = new Button[4];
     protected Button buttonEnd;
+
+    protected HelperApplication helperApplication;
+    protected LinearLayout layAd;
 
     protected Letter letter = null;
 
@@ -96,6 +102,14 @@ public class PlayActivity extends AppCompatActivity {
         });
     }
 
+    protected void animUi(){
+        Animation anim = AnimationUtils.loadAnimation(PlayActivity.this, R.anim.fadein_anim);
+        for(int i=0;i<4;i++){
+            button[i].startAnimation(anim);
+        }
+        titleText.startAnimation(anim);
+    }
+
     protected void setUi(){
         attemptText = (TextView) findViewById(R.id.attemptTextView);
         titleText = (TextView) findViewById(R.id.titleTextView);
@@ -109,9 +123,16 @@ public class PlayActivity extends AppCompatActivity {
     protected void initialize(){
         mainLL = (RelativeLayout) findViewById(R.id.mainView);
         mainLL.setAlpha(0);
-        
+
+        layAd = (LinearLayout) findViewById(R.id.layad);
+        helperApplication = (HelperApplication) getApplication();
+        helperApplication.loadAd(layAd);
+
         apiHelper.signInSilently();
-        apiHelper.loadAdd();
+        //apiHelper.loadAdd("PlayAds");
+
+        //apiHelper.loadAds2((AdView)findViewById(R.id.adView), "PlayAds");
+
         dbHiragana = new HiraganaDatabase(HelperApplication.getAppContext());
         dbPlayer = new PlayerDatabase(HelperApplication.getAppContext());
         doAnimations();
@@ -150,8 +171,11 @@ public class PlayActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v) {
-                button[r].setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.buttonCorrect));
-                correctAnswer();
+                try {
+                    button[r].setBackgroundColor(ContextCompat.getColor(PlayActivity.this, R.color.buttonCorrect));
+                    correctAnswer();
+                }
+                catch(Exception e){}
             }
         });
 
@@ -182,6 +206,7 @@ public class PlayActivity extends AppCompatActivity {
 
     protected void setScene(){
         losujMain();
+        //animUi();
         setPrzyciski();
     }
 

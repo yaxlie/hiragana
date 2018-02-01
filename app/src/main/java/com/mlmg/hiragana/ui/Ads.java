@@ -1,33 +1,28 @@
-package com.mlmg.hiragana;
+package com.mlmg.hiragana.ui;
 
+import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.mlmg.hiragana.R;
 
 /**
- * Created by Marcin on 08.11.2017.
+ * Created by Marcin on 01.02.2018.
  */
 
-public class HelperApplication extends Application{
-    private static HelperApplication mInstance;
-    private static Context mAppContext;
-    private AdView adView;
+public class Ads extends Application {
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-    }
+    AdView adView;
 
     @Override
     public void onCreate() {
+        // TODO Auto-generated method stub
+
         super.onCreate();
-        mInstance = this;
 
         adView = new AdView(this);
         adView.setAdSize(AdSize.BANNER);
@@ -37,8 +32,6 @@ public class HelperApplication extends Application{
 
         // Load ads into Banner Ads
         adView.loadAd(adRequest);
-
-        this.setAppContext(getApplicationContext());
     }
 
     public void loadAd(LinearLayout layAd) {
@@ -53,15 +46,4 @@ public class HelperApplication extends Application{
 
     }
 
-    public static HelperApplication getInstance() {
-        return mInstance;
-    }
-
-    public static Context getAppContext() {
-        return mAppContext;
-    }
-
-    public void setAppContext(Context mAppContext) {
-        this.mAppContext = mAppContext;
-    }
 }

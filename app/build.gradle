@@ -13,8 +13,8 @@ android {
         applicationId "com.mlmg.hiragana"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 34
-        versionName "1.54"
+        versionCode 36
+        versionName "1.56"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

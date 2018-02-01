@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -145,11 +146,28 @@ public class GoogleApiHelper {
         }
     }
 
-    public void loadAdd(){
+    public void loadAdd(String agent){
         AdView adView = (AdView) activity.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
-                .setRequestAgent("android_studio:ad_template").build();
+                .setRequestAgent(agent).build();
         adView.loadAd(adRequest);
+    }
+
+    public void pauseAds(){
+        AdView adView = (AdView) activity.findViewById(R.id.adView);
+        adView.pause();
+    }
+
+    public void resumeAds(){
+        AdView adView = (AdView) activity.findViewById(R.id.adView);
+        adView.resume();
+    }
+
+    public void loadAds2(AdView mAdView, String name){
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        mAdView.setAdSize(AdSize.SMART_BANNER);
+        mAdView.setAdUnitId(name);
+        mAdView.loadAd(adRequestBuilder.build());
     }
 
 }

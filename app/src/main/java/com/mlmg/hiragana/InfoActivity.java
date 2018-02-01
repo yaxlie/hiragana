@@ -10,7 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
 import com.mlmg.hiragana.database.HiraganaDatabase;
+import com.mlmg.hiragana.ui.Ads;
 
 import java.util.HashMap;
 
@@ -18,6 +20,8 @@ public class InfoActivity extends AppCompatActivity {
 
     private LinearLayout layout[] = new LinearLayout[5];
     private RelativeLayout mainLL;
+    private HelperApplication helperApplication;
+    private LinearLayout layAd;
 
 
     @Override
@@ -29,7 +33,11 @@ public class InfoActivity extends AppCompatActivity {
         mainLL.setAlpha(0);
 
         GoogleApiHelper apiHelper = new GoogleApiHelper(InfoActivity.this);
-        apiHelper.loadAdd();
+        //apiHelper.loadAdd("InfoAds");
+        layAd = (LinearLayout) findViewById(R.id.layad);
+        helperApplication = (HelperApplication) getApplication();
+        helperApplication.loadAd(layAd);
+
         addLetters();
 
         Animation anim = AnimationUtils.loadAnimation(InfoActivity.this, R.anim.fadein_anim);

@@ -25,6 +25,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -36,6 +39,7 @@ import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mlmg.hiragana.database.PlayerDatabase;
+import com.mlmg.hiragana.ui.Ads;
 
 import org.w3c.dom.Text;
 
@@ -50,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button timeButton;
     private Button textPlayButton;
     private Button duelButton;
+
+    private HelperApplication helperApplication;
+    private LinearLayout layAd;
 
     private GoogleApiHelper apiHelper = new GoogleApiHelper(MainActivity.this);
     private Animation scaleAnim;
@@ -71,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //connectGoogle();
         apiHelper.startSignInIntent();
 
-        apiHelper.loadAdd();
         initiateUI();
         updateScore();
         setCrowns();
@@ -83,10 +89,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onResume();
         mainLL.setAlpha(1);
         apiHelper.signInSilently();
+        //apiHelper.resumeAds();
+        helperApplication.loadAd(layAd);
+
         updateScore();
         setCrowns();
         activateLevels();
         doAnims();
+    }
+
+    @Override
+    public void onPause() {
+        //apiHelper.pauseAds();
+
+        super.onPause();
     }
 
     @Override
@@ -119,6 +135,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         buttonPlay[3] = (Button) findViewById(R.id.buttonE);
         buttonPlay[4] = (Button) findViewById(R.id.buttonO);
         buttonPlay[5] = (Button) findViewById(R.id.buttonAll);
+
+        //apiHelper.loadAdd("MainAds");
+        layAd = (LinearLayout) findViewById(R.id.layad);
+        helperApplication = (HelperApplication) getApplication();
+        helperApplication.loadAd(layAd);
 
         for(int i=0; i<6; i++){
             final int finalI = i;
@@ -155,10 +176,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             });
         }
 
-        Button achiButton = (Button) findViewById(R.id.buttonAchievements);
+        final Button achiButton = (Button) findViewById(R.id.buttonAchievements);
         achiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_anim);
+                achiButton.startAnimation(anim);
                 if(apiHelper.isSignedIn())
                     apiHelper.showAchievements();
                 else
@@ -166,10 +189,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        Button rankButton = (Button) findViewById(R.id.buttonRanking);
+        final Button rankButton = (Button) findViewById(R.id.buttonRanking);
         rankButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_anim);
+                rankButton.startAnimation(anim);
                 if(apiHelper.isSignedIn())
                     apiHelper.showLeaderboard();
                 else
@@ -177,10 +202,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        Button infoButton = (Button) findViewById(R.id.buttonInfo);
+        final Button infoButton = (Button) findViewById(R.id.buttonInfo);
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_anim);
+                infoButton.startAnimation(anim);
                 Intent intent = new Intent(MainActivity.this, InfoActivity.class);
                 startActivity(intent);
             }
@@ -287,10 +314,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        Button rateButton = (Button) findViewById(R.id.rateButton);
+        final Button rateButton = (Button) findViewById(R.id.rateButton);
         rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.scale_anim);
+                rateButton.startAnimation(anim);
                 Uri uri = Uri.parse("market://details?id=" + getPackageName());
                 Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
                 try {

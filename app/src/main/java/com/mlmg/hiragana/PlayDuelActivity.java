@@ -2,6 +2,7 @@ package com.mlmg.hiragana;
 
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -76,7 +77,8 @@ public class PlayDuelActivity extends PlayActivity {
             botCorrect++;
         }
 
-        Drawable img = getResources().getDrawable( R.drawable.android );
+        Drawable img = getResources().getDrawable( R.drawable.android_icon );
+        img.setBounds(10,0,0,0);
         button[id].setCompoundDrawablesWithIntrinsicBounds( img, null, null, null);
     }
 
@@ -108,7 +110,7 @@ public class PlayDuelActivity extends PlayActivity {
                 public void run() {
                     setScene();
                 }
-            }, 2000);
+            }, 1500);
         }
         else{
             over();
@@ -163,6 +165,7 @@ public class PlayDuelActivity extends PlayActivity {
         }
         builder.setTitle("Hiragana DUEL")
                 .setMessage(msg)
+                .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         finish();

@@ -115,16 +115,14 @@
             android:text="" />
     </LinearLayout>
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/layad"
         android:layout_marginBottom="10dp"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/ad_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/linearLayout3"
-        android:layout_centerHorizontal="true">
-    </com.google.android.gms.ads.AdView>
+        android:orientation="vertical">
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textBestScore"
