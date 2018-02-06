@@ -41,6 +41,10 @@ public class HelperApplication extends Application{
         this.setAppContext(getApplicationContext());
     }
 
+    public void refreshAd(){
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+    }
     public void loadAd(LinearLayout layAd) {
 
         // Locate the Banner Ad in activity xml

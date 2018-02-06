@@ -7,8 +7,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -25,9 +23,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -39,9 +34,6 @@ import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mlmg.hiragana.database.PlayerDatabase;
-import com.mlmg.hiragana.ui.Ads;
-
-import org.w3c.dom.Text;
 
 import static com.mlmg.hiragana.GoogleApiHelper.RC_SIGN;
 
@@ -54,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button timeButton;
     private Button textPlayButton;
     private Button duelButton;
+    private Button drawButton;
 
     private HelperApplication helperApplication;
     private LinearLayout layAd;
@@ -314,6 +307,39 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
+        drawButton = (Button) findViewById(R.id.buttonDraw);
+        drawButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Drawable drawable = drawButton.getBackground();
+                drawable.setColorFilter(getResources().getColor(R.color.selected), PorterDuff.Mode.LIGHTEN);
+                drawButton.setBackground(drawable);
+
+                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadeout_anim);
+                anim.setAnimationListener(new Animation.AnimationListener(){
+                    @Override
+                    public void onAnimationStart(Animation arg0) {
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation arg0) {
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation arg0) {
+
+                        Drawable drawable = drawButton.getBackground();
+                        drawable.setColorFilter(null);
+                        drawButton.setBackground(drawable);
+
+                        mainLL.setAlpha(0);
+                        Intent intent = new Intent(MainActivity.this, PlayPaintActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                mainLL.startAnimation(anim);
+            }
+        });
+
         final Button rateButton = (Button) findViewById(R.id.rateButton);
         rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -382,6 +408,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         timeButton.startAnimation(scaleAnim);
         textPlayButton.startAnimation(scaleAnim);
         duelButton.startAnimation(scaleAnim);
+        drawButton.startAnimation(scaleAnim);
     }
 
     private void setCrowns(){
