@@ -1,9 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/mainView"
+    android:background="@drawable/bg"
     tools:context="com.mlmg.hiragana.PlayPaintActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:alpha="0.5"
+        ads:srcCompat="@drawable/points"
+        android:layout_alignBottom="@+id/timeTextView"
+        android:layout_toLeftOf="@+id/timeTextView"
+        android:layout_toStartOf="@+id/timeTextView" />
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="23dp"
+        android:gravity="center"
+        android:text="MA"
+        android:textColor="@android:color/white"
+        android:textSize="80sp" />
+
+    <TextView
+        android:id="@+id/attemptTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:gravity="center"
+        android:text="1/10"
+        android:textSize="20sp"
+        android:layout_alignTop="@+id/titleTextView" />
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="100"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="5dp"
+        android:textSize="20sp"
+        android:layout_alignTop="@+id/titleTextView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/buttonEnd"
+        android:layout_width="80dp"
+        android:layout_height="35dp"
+        android:background="@color/buttonColor"
+        android:drawableBottom="@android:drawable/ic_media_play"
+        android:layout_below="@+id/titleTextView"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/buttonRefresh"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@color/buttonColor"
+        android:drawableBottom="@android:drawable/ic_menu_rotate"
+        android:layout_above="@+id/layad"
+        android:layout_centerHorizontal="true" />
+
+    <view
+        android:id="@+id/drawingView"
+        class="com.mlmg.hiragana.DrawingView"
+        id="@+id/view"
+        layout_below="@+id/buttonEnd"
+        layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/buttonRefresh"
+        android:layout_below="@+id/buttonEnd"
+        android:layout_margin="15dp"
+        android:background="@color/colorPrimaryDark" />
+
+    <LinearLayout
+        android:id="@+id/layad"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"></LinearLayout>
+
+</android.widget.RelativeLayout>

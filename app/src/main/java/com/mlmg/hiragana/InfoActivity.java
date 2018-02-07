@@ -18,6 +18,9 @@ import java.util.HashMap;
 
 public class InfoActivity extends AppCompatActivity {
 
+    //TODO zapisywanie zlych/dobrych odpowiedzi i wyswietlanie przy znaczkach + progress bar z prawej strony znaczka
+    //TODO zapisywanie dokladnosci rysowania poszczegolnych znaczkow + progress bar z lewej strony znaczka
+
     private LinearLayout layout[] = new LinearLayout[5];
     private RelativeLayout mainLL;
     private HelperApplication helperApplication;
