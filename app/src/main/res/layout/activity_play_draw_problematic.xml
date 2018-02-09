@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/mainView"
     android:background="@drawable/bg"
-    tools:context="com.mlmg.hiragana.PlayPaintActivity">
+    tools:context="com.mlmg.hiragana.PlayPaintProblematicActivity">
 
     <ImageView
         android:id="@+id/imageView2"

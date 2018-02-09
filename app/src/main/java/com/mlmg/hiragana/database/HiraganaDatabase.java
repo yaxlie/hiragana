@@ -115,6 +115,7 @@ public class HiraganaDatabase extends SQLiteOpenHelper {
         if(res.move(i)) {
             letter = new Letter(res.getInt(0), res.getString(1), res.getString(2), res.getInt(3), res.getInt(4));
         }
+        res.close();
         return letter;
     }
 
@@ -129,6 +130,20 @@ public class HiraganaDatabase extends SQLiteOpenHelper {
         if(res.move(i)) {
             letter = new Letter(res.getInt(0), res.getString(1), res.getString(2), res.getInt(3), res.getInt(4));
         }
+        res.close();
+        return letter;
+    }
+
+    public Letter getLetter(String romaji) {
+        romaji = "'" + romaji.toUpperCase() + "'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from hiragana where letter_l like "+romaji , null);
+        Letter letter = null;
+
+        if(res.moveToNext()) {
+            letter = new Letter(res.getInt(0), res.getString(1), res.getString(2), res.getInt(3), res.getInt(4));
+        }
+        res.close();
         return letter;
     }
 
@@ -141,6 +156,7 @@ public class HiraganaDatabase extends SQLiteOpenHelper {
     public int getSizeCategory(int category){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from hiragana where category = CAST("+category+" as TEXT)" , null);
+        res.close();
         return res.getCount();
     }
 }

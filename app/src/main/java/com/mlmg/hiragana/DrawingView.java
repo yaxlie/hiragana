@@ -29,6 +29,7 @@ public class DrawingView extends View {
     private Paint circlePaint;
     private Path circlePath;
     private Paint mPaint;
+    private boolean touched = false;
 
 
     public DrawingView(Context context, AttributeSet attrs) {
@@ -117,7 +118,6 @@ public class DrawingView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 touch_start(x, y);

@@ -15,9 +15,9 @@
         android:layout_height="20dp"
         android:alpha="0.5"
         ads:srcCompat="@drawable/points"
-        android:layout_alignBottom="@+id/timeTextView"
-        android:layout_toLeftOf="@+id/timeTextView"
-        android:layout_toStartOf="@+id/timeTextView" />
+        android:layout_alignBottom="@+id/pointsTextView"
+        android:layout_toLeftOf="@+id/pointsTextView"
+        android:layout_toStartOf="@+id/pointsTextView" />
 
     <TextView
         android:id="@+id/titleTextView"
@@ -42,7 +42,7 @@
         android:layout_alignTop="@+id/titleTextView" />
 
     <TextView
-        android:id="@+id/timeTextView"
+        android:id="@+id/pointsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"

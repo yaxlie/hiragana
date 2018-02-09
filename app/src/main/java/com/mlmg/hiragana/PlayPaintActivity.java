@@ -1,5 +1,6 @@
 package com.mlmg.hiragana;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.nfc.Tag;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,9 +35,9 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.util.HashMap;
 
-public class PlayPaintActivity extends PlayActivity {
+public class PlayPaintActivity extends AppCompatActivity {
 
-    private class Cords{
+    protected class Cords{
         private int x;
         private int y;
         private boolean active=false;
@@ -75,7 +77,7 @@ public class PlayPaintActivity extends PlayActivity {
             this.active = active;
         }
     }
-    private class Score{
+    protected class Score{
         private int badPixels=0;
         private int score=0;
         public void incScore(){
@@ -102,28 +104,65 @@ public class PlayPaintActivity extends PlayActivity {
         }
     }
 
-    private static final int IMAGE_WIDTH = 256;
-    private static final int IMAGE_HEIGHT = 256;
-    private static final int S = 25;
+    protected static int maxToGet = 30;
+    protected static int maxAttempt = 10;
 
-    private HashMap<String,Cords> checkPoints = new HashMap<>();
-    private Cords[][] checkPointsArray = new Cords[IMAGE_WIDTH][IMAGE_HEIGHT];
+    protected int points;
+    protected boolean skipProcessing = false;
+    protected TextView attemptText;
+    protected TextView titleText;
+    protected TextView pointsText;
 
-    private TextView textCorrect;
 
-    private static final int ARRAY_SIZE = 16;
+    protected boolean done = false;
+    protected Animation anim;
 
-    private RelativeLayout mainLL;
-    private DrawingView drawingView;
-    private Button buttonRefresh;
-    private Button buttonNext;
 
-    private ImageView ivModel;
+    protected Button[] button = new Button[4];
+    protected Button buttonEnd;
 
-    private float matchingValue = 0;
+    protected HelperApplication helperApplication;
+    protected LinearLayout layAd;
 
-    private boolean[][] modelSign = new boolean[ARRAY_SIZE][ARRAY_SIZE];
-    private boolean[][] userSign = new boolean[ARRAY_SIZE][ARRAY_SIZE];
+    protected Letter letter = null;
+    protected Bitmap modelBitmap;
+
+    protected int levelId;
+
+    protected int correctIdButton;
+
+    protected int pointsToGet = maxToGet;
+    protected int attempt = 1;
+
+    protected Handler handler = new Handler();
+    protected ProgressDialog dialog;
+
+    protected HiraganaDatabase dbHiragana;
+    protected PlayerDatabase dbPlayer;
+    protected GoogleApiHelper apiHelper = new GoogleApiHelper(PlayPaintActivity.this);
+
+    protected static final int IMAGE_WIDTH = 256;
+    protected static final int IMAGE_HEIGHT = 256;
+    protected static final int S = 25;
+
+    protected HashMap<String,Cords> checkPoints = new HashMap<>();
+    protected Cords[][] checkPointsArray = new Cords[IMAGE_WIDTH][IMAGE_HEIGHT];
+
+    protected TextView textCorrect;
+    protected float percentageScore=0;
+
+    protected static final int ARRAY_SIZE = 16;
+
+    protected RelativeLayout mainLL;
+    protected DrawingView drawingView;
+    protected Button buttonRefresh;
+    protected Button buttonNext;
+
+    protected ImageView ivModel;
+
+
+    protected boolean[][] modelSign = new boolean[ARRAY_SIZE][ARRAY_SIZE];
+    protected boolean[][] userSign = new boolean[ARRAY_SIZE][ARRAY_SIZE];
 
 //TODO 3 tryby : losowanie z wszystkich; losowanie z najmniej dokladnie rysowanych;
 //TODO losowanie z najmniejszym ratio poprawnych/zlych odp
@@ -138,55 +177,38 @@ public class PlayPaintActivity extends PlayActivity {
         setUi();
         setScene();
         refreshText();
-
-        ivModel = (ImageView) findViewById(R.id.debug2);
-        mainLL = (RelativeLayout) findViewById(R.id.mainView);
-        mainLL.setAlpha(0);
         doAnimations();
 
-        textCorrect = (TextView) findViewById(R.id.textView);
-
-        drawingView = (DrawingView)findViewById(R.id.drawingView);
-
-        buttonRefresh = (Button)findViewById(R.id.buttonRefresh);
-        buttonRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawingView.clearView();
-            }
-        });
-
-        buttonNext = (Button)findViewById(R.id.buttonEnd);
-        buttonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                checkPoints = new HashMap<>();
-                checkPointsArray = new Cords[IMAGE_WIDTH][IMAGE_HEIGHT];
-
-                Bitmap bitmap = drawingView.getBitmap();
-                bitmap = cutBitmap(bitmap);
-
-                Context context = ivModel.getContext();
-                int id = context.getResources().getIdentifier(letter.getLetter_l().toLowerCase()
-                        , "drawable", context.getPackageName());
-
-                Drawable drawable = getResources().getDrawable(id);
-                Bitmap modelBitmap = ((BitmapDrawable) drawable).getBitmap();
-                modelBitmap = cutBitmap(modelBitmap);
-                Drawable d = new BitmapDrawable(modelBitmap);
-
-                ivModel.setBackground(d);
-
-                int cpCount = setCheckPoints(modelBitmap);
-                Score score = achieveCheckPoints(bitmap);
-                float scoreP = getPercentageScore(score.getScore(), cpCount, score.getBadPixels());
-                textCorrect.setText(String.format("%.02f", scoreP) + "%");
-            }
-        });
     }
 
-    @Override
+    protected  void processImage(Bitmap bitmap){
+        checkPoints = new HashMap<>();
+        checkPointsArray = new Cords[IMAGE_WIDTH][IMAGE_HEIGHT];
+        int cpCount = setCheckPoints(modelBitmap);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialog.setMessage("60%");
+            }
+        });
+
+        Score score = achieveCheckPoints(bitmap);
+        percentageScore = getPercentageScore(score.getScore(), cpCount, score.getBadPixels());
+    }
+
+    protected void loadBitmapModel(){
+        Context context = ivModel.getContext();
+        int id = context.getResources().getIdentifier(letter.getLetter_l().toLowerCase()
+                , "drawable", context.getPackageName());
+        Drawable drawable = getResources().getDrawable(id);
+        modelBitmap = ((BitmapDrawable) drawable).getBitmap();
+        modelBitmap = cutBitmap(modelBitmap);
+        Drawable d = new BitmapDrawable(modelBitmap);
+        Bitmap b = Bitmap.createScaledBitmap(((BitmapDrawable) drawable).getBitmap(), 80, 80, true);
+        ivModel.setBackground(new BitmapDrawable(getResources(), b));
+    }
+
     protected void losujMain(){
         int letterUid = letter!=null? letter.getUid(): -1;
         boolean losuj = true;
@@ -198,25 +220,124 @@ public class PlayPaintActivity extends PlayActivity {
         titleText.setText(letter.getLetter_h());
     }
 
-    private float getPercentageScore(float c, float a, float bp){
+    protected float getPercentageScore(float c, float a, float bp){
         float score = c/a*100 - bp/40;
         if (score<0)
                 score =0;
         return score;
     }
 
-    @Override
+    protected void goNext(){
+        attempt++;
+        setScene();
+        refreshText();
+        drawingView.clearView();
+        ivModel.setVisibility(View.INVISIBLE);
+    }
+
     protected void setUi(){
         titleText = (TextView) findViewById(R.id.titleTextView);
+        textCorrect = (TextView) findViewById(R.id.textView);
+        attemptText = (TextView) findViewById(R.id.attemptTextView);
+        pointsText = (TextView) findViewById(R.id.pointsTextView);
+        pointsText.setText("0");
+        drawingView = (DrawingView)findViewById(R.id.drawingView);
+
+        buttonRefresh = (Button)findViewById(R.id.buttonRefresh);
+        buttonRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawingView.clearView();
+            }
+        });
+
+        buttonNext = (Button)findViewById(R.id.buttonNext);
+        buttonNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(attempt <= maxAttempt)
+                    goNext();
+                else{
+                    finish();
+                }
+            }
+        });
+
+        ivModel = (ImageView) findViewById(R.id.debug2);
+        mainLL = (RelativeLayout) findViewById(R.id.mainView);
+        mainLL.setAlpha(0);
+
+        buttonNext.startAnimation(anim);
+
+        buttonEnd = (Button) findViewById(R.id.buttonEnd);
+        buttonEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.setMessage("0%");
+                dialog.show();
+
+                final Bitmap[] bitmap = {drawingView.getBitmap()};
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        bitmap[0] = cutBitmap(bitmap[0]);
+                        if(!skipProcessing)
+                            processImage(bitmap[0]);
+                        dialog.dismiss();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ivModel.setVisibility(View.VISIBLE);
+                                refreshText();
+                                buttonNext.setVisibility(View.VISIBLE);
+                                buttonNext.startAnimation(anim);
+                                if(!done){
+                                    points += maxToGet*(percentageScore/100);
+                                    dbPlayer.upStatsDrawValue(letter.getLetter_l(),percentageScore);
+                                    updateAchievements((int)(maxToGet*(percentageScore/100)),percentageScore);
+                                    done = true;
+                                }
+                            }
+                        });
+                    }
+                }).start();
+
+            }
+        });
     }
 
-    @Override
+    protected void updateAchievements(int points, float percentageScore){
+        dbPlayer.addPoints(points);
+        if(apiHelper.isSignedIn()) {
+            apiHelper.progressAchi(getString(R.string.achievement_points_master), points);
+            apiHelper.progressAchi(getString(R.string.achievement_points____whut), points);
+            apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
+
+            apiHelper.updateLeaderboard(getString(R.string.leaderboard_writers), (int)(dbPlayer.getDrawScoreAll()*100));
+            if(percentageScore > 80){
+                apiHelper.unlockAchi(getString(R.string.achievement_patient));
+                apiHelper.progressAchi(getString(R.string.achievement_novelist),1);
+            }
+
+
+        }
+    }
+
     protected void refreshText(){
         titleText.setText(letter.getLetter_l());
+        textCorrect.setText(String.format("%.02f", percentageScore) + "%");
+        attemptText.setText(Integer.toString(attempt) + "/" + Integer.toString(maxAttempt));
+        pointsText.setText(Integer.toString(points));
     }
 
-    @Override
     protected void initialize(){
+        anim = AnimationUtils.loadAnimation(PlayPaintActivity.this, R.anim.scale_anim_endless);
+        dialog = new ProgressDialog(this, android.R.style.Theme_Holo_Dialog_NoActionBar);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setCancelable(false);
+
         layAd = (LinearLayout) findViewById(R.id.layad);
         helperApplication = (HelperApplication) getApplication();
         helperApplication.loadAd(layAd);
@@ -227,13 +348,20 @@ public class PlayPaintActivity extends PlayActivity {
         dbPlayer = new PlayerDatabase(HelperApplication.getAppContext());
     }
 
-    private String cordsToString(int x, int y){
+    protected String cordsToString(int x, int y){
         return "X" + Integer.toString(x) + "Y" + Integer.toString(y);
     }
 
-    @Override
     protected void setScene(){
         losujMain();
+        percentageScore=0;
+        checkPoints = new HashMap<>();
+        checkPointsArray = new Cords[IMAGE_WIDTH][IMAGE_HEIGHT];
+        loadBitmapModel();
+        ivModel.setVisibility(View.INVISIBLE);
+        buttonNext.setVisibility(View.INVISIBLE);
+        buttonNext.clearAnimation();
+        done = false;
     }
 
     protected void doAnimations(){
@@ -256,10 +384,19 @@ public class PlayPaintActivity extends PlayActivity {
 
 
 
+    protected void setDialogProgress(final float progress){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialog.setMessage(String.format("%.00f", progress)+"%");
+            }
+        });
+    }
 
-    private Bitmap cutBitmap(Bitmap bitmap){
+    protected Bitmap cutBitmap(Bitmap bitmap){
         int x1=-1, y1=-1, x2=-1, y2=-1;
         int pixel;
+        skipProcessing = false;
 
         bitmap = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
 
@@ -276,46 +413,57 @@ public class PlayPaintActivity extends PlayActivity {
                 break;
         }
 
-        //find right margin
-        for(int w=bitmap.getWidth()-1; w>=0; w--){
-            for(int h=bitmap.getHeight()-1; h>=0; h--){
-                pixel = bitmap.getPixel(w,h);
-                if(pixel == Color.WHITE){
-                    x2 = w;
-                    break;
-                }
-                if(x2!=-1)
-                    break;
+        setDialogProgress(5);
 
-            }
-        }
+        if(x1 != -1) {
+            //find right margin
+            for (int w = bitmap.getWidth() - 1; w >= 0; w--) {
+                for (int h = bitmap.getHeight() - 1; h >= 0; h--) {
+                    pixel = bitmap.getPixel(w, h);
+                    if (pixel == Color.WHITE) {
+                        x2 = w;
+                        break;
+                    }
+                    if (x2 != -1)
+                        break;
 
-
-        //find top margin
-        for(int h=0; h<bitmap.getHeight(); h++){
-            for(int w=0; w<bitmap.getWidth(); w++){
-                pixel = bitmap.getPixel(w,h);
-                if(pixel == Color.WHITE) {
-                    y1 = h;
-                    break;
                 }
             }
-            if(y1!=-1)
-                break;
-        }
 
-        //find bot margin
-        for(int h=bitmap.getHeight()-1; h>=0; h--){
-            for(int w=0; w<bitmap.getWidth(); w++){
-                pixel = bitmap.getPixel(w,h);
-                if(pixel == Color.WHITE) {
-                    y2 = h;
-                    break;
+            setDialogProgress(10);
+
+            //find top margin
+            for (int h = 0; h < bitmap.getHeight(); h++) {
+                for (int w = 0; w < bitmap.getWidth(); w++) {
+                    pixel = bitmap.getPixel(w, h);
+                    if (pixel == Color.WHITE) {
+                        y1 = h;
+                        break;
+                    }
                 }
+                if (y1 != -1)
+                    break;
             }
-            if(y2!=-1)
-                break;
+
+            setDialogProgress(15);
+
+            //find bot margin
+            for (int h = bitmap.getHeight() - 1; h >= 0; h--) {
+                for (int w = 0; w < bitmap.getWidth(); w++) {
+                    pixel = bitmap.getPixel(w, h);
+                    if (pixel == Color.WHITE) {
+                        y2 = h;
+                        break;
+                    }
+                }
+                if (y2 != -1)
+                    break;
+            }
         }
+        else
+            skipProcessing = true;
+
+        setDialogProgress(20);
 
         Bitmap result = bitmap;
         if(x1>0 && x2>0 && y1>0 && y2>0 && x2-x1>0 && y2-y1>0)
@@ -324,8 +472,9 @@ public class PlayPaintActivity extends PlayActivity {
         return result;
     }
 
-    private Score achieveCheckPoints(Bitmap b){
+    protected Score achieveCheckPoints(Bitmap b){
         int pixel;
+        final float wMax = b.getWidth();
         Score score= new Score();
         for(int w=0; w<b.getWidth(); w++){
             for(int h=0; h<b.getHeight(); h++){
@@ -341,13 +490,16 @@ public class PlayPaintActivity extends PlayActivity {
                     }
                 }
             }
+            final int finalW = w;
+            setDialogProgress(finalW /wMax/10*400 + 60);
         }
         return score;
     }
 
-    private int setCheckPoints(Bitmap b){
+    protected int setCheckPoints(Bitmap b){
         int pixel;
         int points = 0;
+        final float wMax = b.getWidth();
         for(int w=0; w<b.getWidth(); w++){
             for(int h=0; h<b.getHeight(); h++){
                 pixel = b.getPixel(w,h);
@@ -359,11 +511,13 @@ public class PlayPaintActivity extends PlayActivity {
                     }
                 }
             }
+            final float finalW = w;
+            setDialogProgress(finalW /wMax/10*400 + 20);
         }
         return points;
     }
 
-    private void saveCheckpoint(int x, int y){
+    protected void saveCheckpoint(int x, int y){
         checkPoints.put(cordsToString(x,y), new Cords(x,y));
         int sX = x-S>=0?x-S:0;
         int sY = y-S>=0?y-S:0;

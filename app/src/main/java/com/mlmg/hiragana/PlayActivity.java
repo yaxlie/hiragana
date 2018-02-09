@@ -15,11 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdView;
 import com.mlmg.hiragana.database.HiraganaDatabase;
 import com.mlmg.hiragana.database.HiraganaTable;
 import com.mlmg.hiragana.database.PlayerDatabase;
-import com.mlmg.hiragana.ui.Ads;
 
 import java.util.Random;
 
@@ -113,7 +111,7 @@ public class PlayActivity extends AppCompatActivity {
     protected void setUi(){
         attemptText = (TextView) findViewById(R.id.attemptTextView);
         titleText = (TextView) findViewById(R.id.titleTextView);
-        pointsText = (TextView) findViewById(R.id.timeTextView);
+        pointsText = (TextView) findViewById(R.id.pointsTextView);
 
         button[0] = (Button) findViewById(R.id.button1);
         button[1] = (Button) findViewById(R.id.button2);
@@ -252,7 +250,7 @@ public class PlayActivity extends AppCompatActivity {
     protected void correctAnswer() {
         setButtonsActive(false);
         audioPlayer(letter.getLetter_l().toLowerCase());
-
+        dbPlayer.upStatsQuizValue(letter.getLetter_l(),true);
         updatePoints();
         refreshText();
         finalizeCorrectAnswer();
@@ -270,6 +268,7 @@ public class PlayActivity extends AppCompatActivity {
     }
     protected void wrongAnswer(){
         pointsToGet /= 2;
+        dbPlayer.upStatsQuizValue(letter.getLetter_l(),false);
     }
 
     protected void over(){

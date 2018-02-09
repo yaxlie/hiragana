@@ -317,27 +317,77 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 drawable.setColorFilter(getResources().getColor(R.color.selected), PorterDuff.Mode.LIGHTEN);
                 drawButton.setBackground(drawable);
 
-                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadeout_anim);
-                anim.setAnimationListener(new Animation.AnimationListener(){
-                    @Override
-                    public void onAnimationStart(Animation arg0) {
-                    }
-                    @Override
-                    public void onAnimationRepeat(Animation arg0) {
-                    }
-                    @Override
-                    public void onAnimationEnd(Animation arg0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, android.R.style.Theme_Holo_Dialog_NoActionBar);
+                builder.setMessage("MODE")
+                        .setPositiveButton(" ", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadeout_anim);
+                                anim.setAnimationListener(new Animation.AnimationListener(){
+                                    @Override
+                                    public void onAnimationStart(Animation arg0) {
 
-                        Drawable drawable = drawButton.getBackground();
-                        drawable.setColorFilter(null);
-                        drawButton.setBackground(drawable);
+                                    }
+                                    @Override
+                                    public void onAnimationRepeat(Animation arg0) {
+                                    }
+                                    @Override
+                                    public void onAnimationEnd(Animation arg0) {
 
-                        mainLL.setAlpha(0);
-                        Intent intent = new Intent(MainActivity.this, PlayPaintActivity.class);
-                        startActivity(intent);
-                    }
-                });
-                mainLL.startAnimation(anim);
+                                        Drawable drawable = drawButton.getBackground();
+                                        drawable.setColorFilter(null);
+                                        drawButton.setBackground(drawable);
+
+                                        mainLL.setAlpha(0);
+                                        Intent intent = new Intent(MainActivity.this, PlayPaintActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                                mainLL.startAnimation(anim);
+                                dialog.cancel();
+                            }
+                        })
+                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                Drawable drawable = drawButton.getBackground();
+                                drawable.setColorFilter(null);
+                                drawButton.setBackground(drawable);
+                                doAnims();
+                            }
+                        })
+                        .setNegativeButton(" ", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Animation anim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.fadeout_anim);
+                                anim.setAnimationListener(new Animation.AnimationListener(){
+                                    @Override
+                                    public void onAnimationStart(Animation arg0) {
+
+                                    }
+                                    @Override
+                                    public void onAnimationRepeat(Animation arg0) {
+                                    }
+                                    @Override
+                                    public void onAnimationEnd(Animation arg0) {
+
+                                        Drawable drawable = drawButton.getBackground();
+                                        drawable.setColorFilter(null);
+                                        drawButton.setBackground(drawable);
+
+                                        mainLL.setAlpha(0);
+                                        Intent intent = new Intent(MainActivity.this, PlayPaintProblematicActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                                mainLL.startAnimation(anim);
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+                ((Button)alert.findViewById(android.R.id.button1)).setBackgroundResource(R.drawable.random_w);
+                ((Button)alert.findViewById(android.R.id.button2)).setBackgroundResource(R.drawable.problematic);
+
             }
         });
 

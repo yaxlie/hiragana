@@ -1,15 +1,8 @@
 package com.mlmg.hiragana;
 
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -34,7 +27,7 @@ public class PlayTextActivity extends PlayActivity {
 
         attemptText = (TextView) findViewById(R.id.attemptTextView);
         titleText = (TextView) findViewById(R.id.titleTextView);
-        pointsText = (TextView) findViewById(R.id.timeTextView);
+        pointsText = (TextView) findViewById(R.id.pointsTextView);
 
         buttonOk = (Button) findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +72,7 @@ public class PlayTextActivity extends PlayActivity {
 //        editText.setTextColor(getResources().getColor(R.color.buttonWrong));
         titleText.setTextColor(getResources().getColor(R.color.buttonWrong));
         titleText.setText(letter.getLetter_h() + " - " + letter.getLetter_l());
+        dbPlayer.upStatsQuizValue(letter.getLetter_l(),false);
 
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -95,6 +89,7 @@ public class PlayTextActivity extends PlayActivity {
     protected void correctAnswer() {
         audioPlayer(letter.getLetter_l().toLowerCase());
         attempt++;
+        dbPlayer.upStatsQuizValue(letter.getLetter_l(),true);
 
 //        editText.setTextColor(getResources().getColor(R.color.buttonCorrect));
         titleText.setTextColor(getResources().getColor(R.color.buttonCorrect));

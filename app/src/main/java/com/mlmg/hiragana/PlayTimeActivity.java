@@ -2,16 +2,10 @@ package com.mlmg.hiragana;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -19,13 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdView;
 import com.mlmg.hiragana.database.HiraganaDatabase;
-import com.mlmg.hiragana.database.HiraganaTable;
 import com.mlmg.hiragana.database.PlayerDatabase;
-import com.mlmg.hiragana.ui.Ads;
-
-import java.util.Random;
 
 public class PlayTimeActivity extends PlayActivity {
 
@@ -61,7 +50,7 @@ public class PlayTimeActivity extends PlayActivity {
 
         scoreText = (TextView) findViewById(R.id.scoreTextView);
         titleText = (TextView) findViewById(R.id.titleTextView);
-        timeText = (TextView) findViewById(R.id.timeTextView);
+        timeText = (TextView) findViewById(R.id.pointsTextView);
 
         button[0] = (Button) findViewById(R.id.button1);
         button[1] = (Button) findViewById(R.id.button2);

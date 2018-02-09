@@ -23,8 +23,16 @@
     <string name="achievement_duelist" translatable="false">CgkIgp-Pi_AJEAIQDA</string>
     <!-- achievement Android trainer -->
     <string name="achievement_android_trainer" translatable="false">CgkIgp-Pi_AJEAIQDQ</string>
+    <!-- achievement Patient -->
+    <string name="achievement_patient" translatable="false">CgkIgp-Pi_AJEAIQDg</string>
+    <!-- achievement Hand Writer -->
+    <string name="achievement_hand_writer" translatable="false">CgkIgp-Pi_AJEAIQDw</string>
+    <!-- achievement Novelist -->
+    <string name="achievement_novelist" translatable="false">CgkIgp-Pi_AJEAIQEA</string>
     <!-- leaderboard Points -->
     <string name="leaderboard_points" translatable="false">CgkIgp-Pi_AJEAIQAQ</string>
     <!-- leaderboard Time Challenge -->
     <string name="leaderboard_time_challenge" translatable="false">CgkIgp-Pi_AJEAIQCw</string>
+    <!-- leaderboard Writers -->
+    <string name="leaderboard_writers" translatable="false">CgkIgp-Pi_AJEAIQEQ</string>
 </resources>

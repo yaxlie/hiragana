@@ -98,6 +98,11 @@ public class GoogleApiHelper {
                     .increment(achiId, points);
     }
 
+    public void setProgressionAchi(String achiId, int points){
+        Games.getAchievementsClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+                .setSteps(achiId, points);
+    }
+
     public void showAchievements() {
             Games.getAchievementsClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
                     .getAchievementsIntent()
@@ -112,6 +117,11 @@ public class GoogleApiHelper {
     public void updateLeaderboard(String lbId, int score){
             Games.getLeaderboardsClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
                     .submitScore(lbId, score);
+    }
+
+    public void updateLeaderboard(String lbId, long score){
+        Games.getLeaderboardsClient(activity, GoogleSignIn.getLastSignedInAccount(activity))
+                .submitScore(lbId, score);
     }
 
 
