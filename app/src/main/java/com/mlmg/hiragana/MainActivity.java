@@ -35,8 +35,6 @@ import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.mlmg.hiragana.database.PlayerDatabase;
 
-import org.opencv.android.Camera2Renderer;
-import org.opencv.core.MatOfDMatch;
 
 import static com.mlmg.hiragana.GoogleApiHelper.RC_SIGN;
 

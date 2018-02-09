@@ -17,6 +17,7 @@ android {
         versionName "1.56"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -24,6 +25,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets { main { jni.srcDirs = ['src/main/jni', 'src/main/jniLibs/'] } }
 }
 
 dependencies {
@@ -38,7 +40,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-games:11.6.0'
     compile 'com.google.android.gms:play-services-auth:11.6.0'
     testCompile 'junit:junit:4.12'
-    compile project(':openCVLibrary340')
 }
 
 

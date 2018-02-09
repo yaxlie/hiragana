@@ -68,8 +68,8 @@ public class PlayActivity extends AppCompatActivity {
         levelId = b!=null? b.getInt("id"): 1;
 
         setUi();
-        refreshText();
         setScene();
+        refreshText();
     }
 
     @Override

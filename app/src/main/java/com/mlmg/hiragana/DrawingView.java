@@ -141,4 +141,8 @@ public class DrawingView extends View {
         mPath.reset();
         invalidate();
     }
+
+    public Bitmap getBitmap(){
+        return mBitmap;
+    }
 }
