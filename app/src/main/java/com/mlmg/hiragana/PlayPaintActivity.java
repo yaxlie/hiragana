@@ -199,7 +199,7 @@ public class PlayPaintActivity extends AppCompatActivity {
 
     protected void loadBitmapModel(){
         Context context = ivModel.getContext();
-        int id = context.getResources().getIdentifier(letter.getLetter_l().toLowerCase()
+        int id = context.getResources().getIdentifier("sign_"+letter.getLetter_l().toLowerCase()
                 , "drawable", context.getPackageName());
         Drawable drawable = getResources().getDrawable(id);
         modelBitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -255,7 +255,7 @@ public class PlayPaintActivity extends AppCompatActivity {
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(attempt <= maxAttempt)
+                if(attempt < maxAttempt)
                     goNext();
                 else{
                     finish();
@@ -309,20 +309,25 @@ public class PlayPaintActivity extends AppCompatActivity {
     }
 
     protected void updateAchievements(int points, float percentageScore){
-        dbPlayer.addPoints(points);
-        if(apiHelper.isSignedIn()) {
-            apiHelper.progressAchi(getString(R.string.achievement_points_master), points);
-            apiHelper.progressAchi(getString(R.string.achievement_points____whut), points);
-            apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
+        try {
+            dbPlayer.addPoints(points);
+            if (apiHelper.isSignedIn() && percentageScore > 0) {
+                apiHelper.progressAchi(getString(R.string.achievement_points_master), points);
+                apiHelper.progressAchi(getString(R.string.achievement_points____whut), points);
+                apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
 
-            apiHelper.updateLeaderboard(getString(R.string.leaderboard_writers), (int)(dbPlayer.getDrawScoreAll()*100));
-            if(percentageScore > 80){
-                apiHelper.unlockAchi(getString(R.string.achievement_patient));
-                apiHelper.progressAchi(getString(R.string.achievement_novelist),1);
+                apiHelper.updateLeaderboard(getString(R.string.leaderboard_writers), (int) (dbPlayer.getDrawScoreAll() * 100));
+
+                if(dbPlayer.getDrawScoreAll()>=60){
+                    apiHelper.unlockAchi(getString(R.string.achievement_patient));
+                }
+                if (percentageScore > 80) {
+                    apiHelper.unlockAchi(getString(R.string.achievement_hand_writer));
+                    apiHelper.progressAchi(getString(R.string.achievement_novelist), 1);
+                }
             }
-
-
         }
+        catch (Exception e){}
     }
 
     protected void refreshText(){

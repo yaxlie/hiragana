@@ -97,7 +97,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
     public void upStatsDrawValue(String name, float accuracy){
         name = "'" + name.toUpperCase() + "'";
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("UPDATE stats set draw_value = (draw_value * 4 +" + accuracy +") /5 where name like " + name);
+        db.execSQL("UPDATE stats set draw_value = max(draw_value, " + accuracy +") where name like " + name);
     }
     public void upStatsQuizValue(String name, boolean correct){
         float value = correct? 1: 0;

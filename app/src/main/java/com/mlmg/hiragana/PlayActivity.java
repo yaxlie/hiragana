@@ -211,7 +211,8 @@ public class PlayActivity extends AppCompatActivity {
 
     public void audioPlayer(String fileName){
         try {
-            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), getResources().getIdentifier(fileName,"raw",getPackageName()));
+            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), getResources()
+                    .getIdentifier("audio_sign_"+fileName,"raw",getPackageName()));
             //mp.prepare();
             mp.start();
         } catch (Exception e) {
