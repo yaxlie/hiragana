@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button duelButton;
     private Button drawButton;
 
+    private TextView drawPercentageText;
+
     private HelperApplication helperApplication;
     private LinearLayout layAd;
 
@@ -129,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         buttonPlay[3] = (Button) findViewById(R.id.buttonE);
         buttonPlay[4] = (Button) findViewById(R.id.buttonO);
         buttonPlay[5] = (Button) findViewById(R.id.buttonAll);
+
+        drawPercentageText = (TextView) findViewById(R.id.drawPercentageText);
 
         //apiHelper.loadAdd("MainAds");
         layAd = (LinearLayout) findViewById(R.id.layad);
@@ -413,6 +417,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         scoreText.setText(Integer.toString(dbPlayer.getScore()));
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar2);
         progressBar.setProgress(dbPlayer.getBotLevel()+5);
+        drawPercentageText.setText(String.format("%.02f", dbPlayer.getDrawScoreAll()) + "%");
     }
 
     private void activateLevels(){

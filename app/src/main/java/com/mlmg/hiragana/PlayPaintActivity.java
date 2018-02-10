@@ -14,6 +14,7 @@ import android.nfc.Tag;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.ExpandedMenuView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -228,11 +229,14 @@ public class PlayPaintActivity extends AppCompatActivity {
     }
 
     protected void goNext(){
-        attempt++;
-        setScene();
-        refreshText();
-        drawingView.clearView();
-        ivModel.setVisibility(View.INVISIBLE);
+        try {
+            attempt++;
+            setScene();
+            refreshText();
+            drawingView.clearView();
+            ivModel.setVisibility(View.INVISIBLE);
+        }
+        catch (Exception e){}
     }
 
     protected void setUi(){
@@ -316,7 +320,7 @@ public class PlayPaintActivity extends AppCompatActivity {
                 apiHelper.progressAchi(getString(R.string.achievement_points____whut), points);
                 apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
 
-                apiHelper.updateLeaderboard(getString(R.string.leaderboard_writers), (int) (dbPlayer.getDrawScoreAll() * 100));
+                apiHelper.updateLeaderboard(getString(R.string.leaderboard_writers), (long) (dbPlayer.getDrawScoreAll()*100));
 
                 if(dbPlayer.getDrawScoreAll()>=60){
                     apiHelper.unlockAchi(getString(R.string.achievement_patient));

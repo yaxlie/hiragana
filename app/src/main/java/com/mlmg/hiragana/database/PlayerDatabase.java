@@ -100,18 +100,18 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         db.execSQL("UPDATE stats set draw_value = max(draw_value, " + accuracy +") where name like " + name);
     }
     public void upStatsQuizValue(String name, boolean correct){
-        float value = correct? 1: 0;
+        float value = correct? 10: -10;
         name = "'" + name.toUpperCase() + "'";
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("UPDATE stats set quiz_value = (quiz_value * 9 +" + value +") /10 where name like " + name);
+        db.execSQL("UPDATE stats set quiz_value = max(min(quiz_value  +" + value +",100),0)  where name like " + name);
     }
 
     public String getWorseDrawLetter(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("SELECT name FROM stats order by (draw_value) desc LIMIT 10;", null);
+        Cursor res = db.rawQuery("SELECT name FROM stats order by draw_value ASC LIMIT 10;", null);
         Random rand = new Random();
         int i = rand.nextInt(10);
-        String s =  res.move(i)? res.getString(0): "A";
+        String s =  res.move(i)? res.getString(0): "WI";
         res.close();
         return s;
     }

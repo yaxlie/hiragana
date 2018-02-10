@@ -285,6 +285,22 @@
         android:id="@+id/linearLayout6">
 
         <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_weight="0.05"
+            android:alpha="0.5"
+            ads:srcCompat="@android:drawable/ic_menu_edit" />
+        <TextView
+            android:id="@+id/drawPercentageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.52"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="20dp"
+            android:text="0%" />
+
+        <ImageView
             android:id="@+id/imageBot"
             android:layout_width="20dp"
             android:layout_height="20dp"
@@ -316,6 +332,7 @@
             android:layout_weight="0.52"
             android:layout_marginLeft="10dp"
             android:text="0" />
+
     </LinearLayout>
 
 
