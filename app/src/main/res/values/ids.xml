@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_id">339325734786</string>
+    <string name="app_id" translatable="false">339325734786</string>
     <!-- package_name -->
     <string name="package_name" translatable="false">com.mlmg.hiragana</string>
     <!-- achievement Level 1 -->

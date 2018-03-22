@@ -316,6 +316,12 @@ public class PlayActivity extends AppCompatActivity {
                         break;
                 }
             }
+            if(levelId == 2){
+                if(!dbPlayer.isAppRated()){
+                    HelperApplication.getInstance().showRatingDialog(PlayActivity.this);
+                    dbPlayer.setAppRated();
+                }
+            }
         }
         else
             dbPlayer.setUnCrown(levelId);

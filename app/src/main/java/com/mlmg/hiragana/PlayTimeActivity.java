@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mlmg.hiragana.database.HiraganaDatabase;
+import com.mlmg.hiragana.database.HiraganaTable;
 import com.mlmg.hiragana.database.PlayerDatabase;
 
 public class PlayTimeActivity extends PlayActivity {
@@ -67,7 +68,7 @@ public class PlayTimeActivity extends PlayActivity {
 
         bestScore = dbPlayer.getTimescore();
         TextView textBest = (TextView) findViewById(R.id.textBestScore);
-        textBest.setText("Best Score : " +Integer.toString(bestScore));
+        textBest.setText(getString(R.string.best_score) +Integer.toString(bestScore));
 
         setScene();
 
@@ -91,6 +92,18 @@ public class PlayTimeActivity extends PlayActivity {
     }
 
     @Override
+    protected void losujMain(){
+        int letterUid = letter!=null? letter.getUid(): -1;
+        boolean losuj = true;
+
+        while(losuj) {
+            letter = dbHiragana.getRandomAll();
+            losuj = (letter.getUid() == letterUid);
+        }
+        titleText.setText(letter.getLetter_h());
+    }
+
+    @Override
     public void onBackPressed() {
         try {
             timer.cancel();
@@ -108,13 +121,11 @@ public class PlayTimeActivity extends PlayActivity {
         setButtonsActive(false);
         audioPlayer("correct");
 
-
         if(apiHelper.isSignedIn()) {
             apiHelper.progressAchi(getString(R.string.achievement_points_master), correctPoints);
             apiHelper.progressAchi(getString(R.string.achievement_points____whut), correctPoints/10);
             apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
         }
-
         handler.postDelayed(new Runnable() {
             public void run() {
                 setScene();
@@ -125,10 +136,11 @@ public class PlayTimeActivity extends PlayActivity {
     @Override
     protected void wrongAnswer(){
         //audioPlayer("wrong");
-        timer.cancel();
-        timeLeft -= timePenalty;
-        timer = setUpTimer((int)timeLeft).start();
-
+        if(timer!=null) {
+            timer.cancel();
+            timeLeft -= timePenalty;
+            timer = setUpTimer((int) timeLeft).start();
+        }
     }
 
     @Override
@@ -165,8 +177,8 @@ public class PlayTimeActivity extends PlayActivity {
                 } else {
                     builder = new AlertDialog.Builder(PlayTimeActivity.this);
                 }
-                builder.setTitle("Stop!")
-                        .setMessage("Score : \n \n" + Integer.toString(score))
+                builder.setTitle(R.string.stop)
+                        .setMessage(getString(R.string.score) + Integer.toString(score))
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 over();

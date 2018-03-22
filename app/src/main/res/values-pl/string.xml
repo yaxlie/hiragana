@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="ok">OK</string>
+    <string name="ranking_dialog">Jak bardzo podoba Ci się Aplikacja?</string>
+    <string name="would_rate">Czy chcesz ocenić Hiragana Quiz w Google Store? \n To będzie pomocne ^^</string>
+    <string name="rate_the_app">Oceń Quiz</string>
+    <string name="draw_bonus">Remis  Dodatkowe punkty :</string>
+    <string name="win_bonus">Wygrana!   Dodatkowe punkty :</string>
+    <string name="lose">Przegrana!</string>
+    <string name="best_score">Najlepszy wynik :</string>
+    <string name="stop">Koniec!</string>
+    <string name="score">Wynik :</string>
+
+
+</resources>

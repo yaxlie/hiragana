@@ -396,6 +396,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         });
 
         final Button rateButton = (Button) findViewById(R.id.rateButton);
+//        rateButton.setText(dbPlayer.isAppRated()?"True":"False");
         rateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -408,6 +409,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(MainActivity.this, " unable to find market app", Toast.LENGTH_LONG).show();
                 }
+//                HelperApplication.getInstance().showRatingDialog(MainActivity.this);
             }
         });
     }

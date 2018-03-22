@@ -127,7 +127,7 @@ public class PlayDuelActivity extends PlayActivity {
 
         String msg;
         if(playerCorrect == botCorrect) {
-            msg = "Draw\n Bonus points : " + bonus/2;
+            msg = getString(R.string.draw_bonus) + bonus/2;
 
             dbPlayer.addPoints(bonus/2);
             if(apiHelper.isSignedIn()) {
@@ -137,7 +137,7 @@ public class PlayDuelActivity extends PlayActivity {
             }
         }
         else if(playerCorrect > botCorrect) {
-            msg = "You win! :)\n Bonus points : " + bonus;
+            msg = getString(R.string.win_bonus) + bonus;
 
             dbPlayer.addPoints(bonus);
             if(apiHelper.isSignedIn()) {
@@ -153,7 +153,7 @@ public class PlayDuelActivity extends PlayActivity {
             dbPlayer.winDuel();
         }
         else {
-            msg = "You lose! :(";
+            msg = getString(R.string.lose);
             dbPlayer.loseDuel();
         }
 

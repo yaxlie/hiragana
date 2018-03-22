@@ -47,7 +47,8 @@
         <activity
             android:name=".PlayPaintActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".PlayPaintProblematicActivity"></activity>
+        <activity android:name=".PlayPaintProblematicActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

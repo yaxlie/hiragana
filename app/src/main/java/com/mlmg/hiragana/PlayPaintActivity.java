@@ -316,13 +316,16 @@ public class PlayPaintActivity extends AppCompatActivity {
         try {
             dbPlayer.addPoints(points);
             if (apiHelper.isSignedIn() && percentageScore > 0) {
-                apiHelper.progressAchi(getString(R.string.achievement_points_master), points);
-                apiHelper.progressAchi(getString(R.string.achievement_points____whut), points);
-                apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
+                if(points>0) {
+                    apiHelper.progressAchi(getString(R.string.achievement_points_master), points);
+                    apiHelper.progressAchi(getString(R.string.achievement_points____whut), points);
+                    apiHelper.updateLeaderboard(getString(R.string.leaderboard_points), dbPlayer.getScore());
+                }
 
-                apiHelper.updateLeaderboard(getString(R.string.leaderboard_writers), (long) (dbPlayer.getDrawScoreAll()*100));
+                float all = dbPlayer.getDrawScoreAll();
+                apiHelper.updateLeaderboard(getString(R.string.leaderboard_writers), (long) (all*100));
 
-                if(dbPlayer.getDrawScoreAll()>=60){
+                if(all>=60){
                     apiHelper.unlockAchi(getString(R.string.achievement_patient));
                 }
                 if (percentageScore > 80) {

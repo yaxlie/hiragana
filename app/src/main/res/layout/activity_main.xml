@@ -351,7 +351,7 @@
         android:layout_above="@+id/layad"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:text="Rate the App"
+        android:text="@string/rate_the_app"
         android:textSize="8sp"
         app:backgroundTint="@color/colorPrimary" />
 

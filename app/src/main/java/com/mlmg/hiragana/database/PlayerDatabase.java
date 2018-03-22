@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.mlmg.hiragana.Letter;
 
@@ -19,7 +20,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "user.config";
 
     public PlayerDatabase(Context context) {
-        super(context, DATABASE_NAME, null, 4);
+        super(context, DATABASE_NAME, null, 6);
         //SQLiteDatabase db = this.getWritableDatabase();
     }
 
@@ -27,7 +28,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table IF NOT EXISTS levels (uid INTEGER PRIMARY KEY, crown INTEGER, unlocked INTEGER)");
         db.execSQL("create table IF NOT EXISTS user (uid INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "score INTEGER, timescore INTEGER, premium INTEGER)");
+                "score INTEGER, timescore INTEGER, premium INTEGER, rated INTEGER)");
         db.execSQL("create table IF NOT EXISTS duel (uid INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "bot_level INTEGER, wins INTEGER, loses INTEGER)");
 
@@ -46,6 +47,11 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         //db.execSQL("DROP TABLE IF EXISTS levels");
         //db.execSQL("DROP TABLE IF EXISTS user");
         onCreate(db);
+        try {
+            db.execSQL("ALTER TABLE user ADD COLUMN rated INTEGER");
+        }catch(Exception e){
+            Log.w("SQLITE", "Rated column already exists. ");}
+        db.execSQL("UPDATE user set rated = 0 where uid = 1");
     }
 
 
@@ -59,6 +65,19 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         values.put("quiz_value", 0);
         values.put("draw_value", 0);
         db.insert("stats", null, values);
+    }
+
+    public boolean isAppRated(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select rated from user where uid = 1" , null);
+        int i =  res.moveToNext()? res.getInt(0): 0;
+        res.close();
+        return i != 0;
+    }
+
+    public void setAppRated(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE user set rated = 1 where uid = 1");
     }
 
     public float getStatsDrawValue(String name){
@@ -118,15 +137,13 @@ public class PlayerDatabase extends SQLiteOpenHelper {
 
     public float getDrawScoreAll(){
         SQLiteDatabase db = this.getWritableDatabase();
-        int i=0;
         float sum = 0;
-        Cursor res = db.rawQuery("SELECT draw_value FROM stats;", null);
+        Cursor res = db.rawQuery("SELECT sum(draw_value)/count(*) FROM stats;", null);
         while(res.moveToNext()){
-            i++;
             sum+=res.getFloat(0);
         }
         res.close();
-        return sum/i;
+        return sum;
     }
 
     public void incStatsCorrectAns(String name){
@@ -268,6 +285,7 @@ public class PlayerDatabase extends SQLiteOpenHelper {
         values.put("score", 0);
         values.put("timescore", 0);
         values.put("premium", 0);
+        values.put("rated", 0);
         db.insert("user", null, values);
     }
 
